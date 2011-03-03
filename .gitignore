@@ -1,0 +1,16 @@
+# Eonblast Fleece 0.2.2
+
+*.a
+*.o
+*.m
+*.so
+*.html
+
+lua
+luac
+lua-yajl
+luajson
+fleece
+
+.DS_Store
+._*
