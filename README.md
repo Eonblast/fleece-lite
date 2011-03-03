@@ -99,7 +99,6 @@ WHETHER IN AN ACTION OF  CONTRACT,  TORT  OR OTHERWISE,  ARISING
 FROM,  OUT OF OR  IN CONNECTION WITH THE SOFTWARE  OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 
-<pre>
 <style>
 div.head { border: 0; border-top-left-radius: 7px; 
            border-bottom-right-radius: 15px; 
@@ -111,7 +110,6 @@ div.foot { border: 0; border-bottom-left-radius: 15px;
            background: url(etc/images/fleece-footer-1.1.png) no-repeat bottom left;
            height:31px; padding: 0; margin: 0; }  
 </style>
-</pre>
 _______________________________________________________________________
 README fleece hd Feb 2011 - powered by Eonblast http://www.eonblast.com
 
