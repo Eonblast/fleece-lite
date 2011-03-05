@@ -4,7 +4,6 @@
 *.o
 *.m
 *.so
-*.html
 
 lua
 luac
