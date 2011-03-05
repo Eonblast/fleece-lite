@@ -1,0 +1,12 @@
+Lunit is available through a public GIT repository.
+To get the latest lunit source code, do:
+
+	git clone git://repo.or.cz/lunit.git
+
+Currently there is no mailing list dedicated to lunit so if you have patches,
+please send them to:
+
+	mroth@nessie.de
+
+Please don't forget to add a Signed-Off-By line (git option -s or --signoff)
+to state that your patches apply to the MIT license.

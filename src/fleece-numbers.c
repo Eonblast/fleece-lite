@@ -2,7 +2,7 @@
 *** File        : Fleece - Lua to JSON module                               ***
 *** File        : fleece-numbers.c                                          ***
 *** Description : custom programmed float and integer to ascii conversion   ***
-*** Version     : 0.2.2 / alpha                                             ***
+*** Version     : 0.2.3 / alpha                                             ***
 *** Requirement : self-sufficient ANSI C                                    ***
 *** Copyright   : (c) 2011 Henning Diedrich, Eonblast Corporation           ***
 *** Author      : H. Diedrich <hd2010@eonblast.com>                         ***
@@ -26,8 +26,6 @@
 ***  This file is INCLUDED into fleece.c currently.                         ***
 ***                                                                         ***
 ***-------------------------------------------------------------------------**/
-
-#define SELFTEST 1
 
 char *mux0 = 0;
 char *mux = 0;
@@ -164,11 +162,11 @@ void itoa(int pvalue, char* pstr, size_t *rlen) {
 	strreverse(str,wstr-1);
 	
 	ret:;
-	#if (SELFTEST >=3)
+	#if SELFCHECK >=3
 		char test[32];
 		sprintf(test, "%d", pvalue);
 		if(strcmp(test, pstr))
-			printf("Fast integer look up conversion error: %d -> '%s'.\n", pvalue, pstr);
+			printf("fleece [3]: ** fast integer look up conversion error: %d -> '%s'.\n", pvalue, pstr);
 	#endif
 	return;
 }

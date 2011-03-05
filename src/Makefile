@@ -49,7 +49,7 @@ linux:
 macosx:
 	gcc -bundle -undefined dynamic_lookup -I../include -o fleece.so fleece.c
 
-macosx-old:
+macosx-old: 
 	export MACOSX_DEPLOYMENT_TARGET="10.3" && gcc -bundle -undefined dynamic_lookup -I../include -o fleece.so fleece.c
 
 mingw:
@@ -65,8 +65,8 @@ solaris:
 .PHONY: all $(PLATS) default o a clean depend echo none
 
 luajson.o: luajson.c luajson.h 
-fleece.o: fleece.h fleece-intern.h fleece.c fleece-buffers.c fleece-numbers.c \
-	fleece-insp_ctrl.c fleece-size.c fleece-stringify.c fleece-lua.c 
+fleece.o: fleece.h fleece-config.h fleece-intern.h fleece.c fleece-buffers.c \
+	fleece-numbers.c fleece-insp_ctrl.c fleece-size.c fleece-stringify.c fleece-lua.c 
 
 # --------------------------------------------------------------------------
 # Makefile fleece/src Feb 2011 - powered by Eonblast http://www.eonblast.com

@@ -1,6 +1,6 @@
 <div class=head></div>
 
-**Eonblast Fleece 0.2.2**
+**Eonblast Fleece 0.2.3**
 
 Support Files
 -------------

@@ -2,7 +2,7 @@
 | *** Packages    : Fleece - fast Lua to JSON module                          *** |
 | *** File        : fleece-intern.h                                           *** |
 | *** Description : internal header file                                      *** |
-| *** Version     : 0.2.2 / alpha                                             *** |
+| *** Version     : 0.2.3 / alpha                                             *** |
 | *** Requirement : self sufficient ANSI C                                    *** |
 | *** Copyright   : (c) 2011 Eonblast Corporation http://www.eonblast.com     *** |
 | *** Author      : H. Diedrich <hd2010@eonblast.com>                         *** |
@@ -22,6 +22,8 @@
 
 #ifndef FLEECE_INTERN_H
 #define FLEECE_INTERN_H
+
+#include "fleece-config.h"
 
 #ifdef FLEECE_WITH_ASSERTS
 	#define assert_hard(cond, say) { if(!(cond))) { puts("\nfleece assertion failed: "); puts(say); puts("\n"); exit(0); } }
@@ -54,8 +56,8 @@
 
 #define FLEECE_DEFAULT_MAX_DEPTH 			100 	/* allowed ... */
 #define FLEECE_DEFAULT_MAX_WASTE 			20000 	/* allowed wasted space before switching to stragegy #2 */
-#define FLEECE_DEFAULT_LUCKY_BUF 			100000 	/* allowed buffer for first part of strategy #1 */
-#define FLEECE_DEFAULT_PARTS_BUF  			10000 	/* allowed buffer for following parts in strategy #1 */
+// #define FLEECE_DEFAULT_LUCKY_BUF 			1000 	/* allowed buffer for first part of strategy #1 */
+// #define FLEECE_DEFAULT_PARTS_BUF  			100 	/* allowed buffer for following parts in strategy #1 */
 #define FLEECE_DEFAULT_MAX_BUF 			    1000000	/* allowed ... */
 #define FLEECE_DEFAULT_MAX_HOLES 			1000 	/* allowed ... */
 

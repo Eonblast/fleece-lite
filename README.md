@@ -1,6 +1,6 @@
 <div class=head></div>
 
-# Eonblast Fleece 0.2.2 Lite
+# Eonblast Fleece 0.2.3 Lite
 
 **Fast Lua to JSON conversion.**
 
@@ -25,6 +25,7 @@ Please contribute your platform's make instructions, thanks.
 **Testing:**
 
 	make test
+	make unit-test # long
 
 **Benchmarking:**
 
@@ -37,32 +38,28 @@ Please contribute your platform's make instructions, thanks.
 
 	t = {1,2,3}
 	json_str = fleece.json(t)
+	
+Fleece works with Lua 5.1.4 and 5.1.4-2, it can be adapted to other Lua versions or LuaJIT and will be ported to 5.2. Part of its speed advantage over other JSON packages is derived from the fact that it accesses the Lua table data at the core C level, below the Lua C API, which frees a significant number of cycles. It also uses a string buffer that is custom designed for the specific task of building a JSON string. It uses custom programmed, faster float and integer conversion and at the expense of some memory consumtion, it keeps some string and lookup buffers around once initialized, for the next encoding. Performance can be tuned by tweaking buffer sizes at compile time, by setting defines in src/fleece-intern.h. The defaults are set for Fleece to produce standard JSON reasonably fast.
 
 ## Functions
 
 **fleece.json()** - convert (stringify) a Lua value to a JSON string  
 **fleece.size()** - dry run to find the JSON result size, without creating it  
 
-## Compatibility
-	
-Fleece works with Lua 5.1.4 and 5.1.4-2, it can be adapted to other Lua versions or LuaJIT and will be ported to 5.2. 
-
-## Performance
-
-Part of its speed advantage over other JSON packages is derived from the fact that it accesses the Lua table data at the core C level, below the Lua C API, which frees a significant number of cycles. It also uses a string buffer that is custom designed for the specific task of building a JSON string. It uses custom programmed, faster float and integer conversion and at the expense of some memory consumtion, it keeps some string and lookup buffers around once initialized, for the next encoding. Performance can be tuned by tweaking buffer sizes at compile time, by setting defines in src/fleece-intern.h. The defaults are set for Fleece to produce standard JSON reasonably fast.
-
 ## Road Map 
 
 Could look like this:
 
-0.2.3   
-Official JSON compatibility, escapes etc.   
-**fleece.warp()** - convert (stringify) a Lua value to a JSON string, fastest.   
-**fleece.pack()** - convert (stringify) a Lua value to a JSON string, smallest.   
+0.3.1  
 
-0.2.4  
-**fleece.time()** - dry run to find a cpu time estimate for a conversion   
-**fleece.buff()** - dry run to find the memory needed, without allocating it    
+* Official JSON compatibility, escapes etc.  
+* **fleece.warp()** - convert (stringify) a Lua value to a JSON string,  fastest.  
+* **fleece.pack()** - convert (stringify) a Lua value to a JSON string, smallest.  
+
+0.3.2  
+
+* **fleece.time()** - dry run to find a cpu time estimate for a conversion  
+* **fleece.buff()** - dry run to find the memory needed, without allocating it  
 
 
 #### Objects and Arrays
@@ -74,6 +71,23 @@ Lua knows only tables, JSON knows arrays and objects, with sparse arrays possibl
 This is the open 'lite' branch, the master is cluttered and not open at this point. Please check the license below. As natural person you can use it without restriction. Same for anything Open Source. 
 
 This License is valid for Fleece Lite. It is not applicable for the master branch, in case we should share it with you and it is not applicable for JSON4 and LuaJSON that are bundled with Fleece Lite for comparison, in etc/.
+
+## History
+
+**0.2.3 lite** - 05 Mar 2011 - hd  
+
+* added unit tests, basic and complex, generated cases  
+* major testing for special cases running over buffer boundaries  
+* fixed buffer overrun on consecutive brackets  
+* buffer functions and macros weeded out and simplified  
+* verbosity and selftest cond compiles added  
+* unified verbosity and selftest definition  
+* added main config header  
+  
+**0.2.2 lite** - 03 Mar 2011 - hd  
+
+* first pulished version  
+
 
 ## License
 
@@ -99,6 +113,7 @@ WHETHER IN AN ACTION OF  CONTRACT,  TORT  OR OTHERWISE,  ARISING
 FROM,  OUT OF OR  IN CONNECTION WITH THE SOFTWARE  OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 
+<pre>
 <style>
 div.head { border: 0; border-top-left-radius: 7px; 
            border-bottom-right-radius: 15px; 
@@ -110,6 +125,7 @@ div.foot { border: 0; border-bottom-left-radius: 15px;
            background: url(etc/images/fleece-footer-1.1.png) no-repeat bottom left;
            height:31px; padding: 0; margin: 0; }  
 </style>
+</pre>
 _______________________________________________________________________
 README fleece hd Feb 2011 - powered by Eonblast http://www.eonblast.com
 

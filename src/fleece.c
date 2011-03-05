@@ -2,7 +2,7 @@
 *** Package     : Fleece - fast Lua to JSON conversion                      ***
 *** File        : fleece.c                                                  ***
 *** Description : main source file: just a bunch of includes                ***
-*** Version     : 0.2.2 / alpha                                             ***
+*** Version     : 0.2.3 / alpha                                             ***
 *** Requirement : Lua 5.1.4 - 5.1.4-2                                       ***
 *** Copyright   : 2011 Henning Diedrich, Eonblast Corporation               ***
 *** Author      : H. Diedrich <hd2010@eonblast.com>                         ***

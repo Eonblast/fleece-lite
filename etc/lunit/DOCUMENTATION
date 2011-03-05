@@ -1,0 +1,245 @@
+
+To use the lunit unit testing framework copy these files to your
+lua search path or include it to your package:
+
+        lunit
+        lunit.lua
+        lunit-console.lua
+
+
+To write a testcase, open the framework using require. The "lunit" shell script
+works hard to find the "lunit.lua" and "lunit-console.lua" in all cases.
+
+        require "lunit"
+
+
+Lunit uses the lua-5.1 module system. A testcase is a arbitrarily named module
+marked with "lunit.testcase" as a testcase. An example:
+
+        require "lunit"
+
+        module( "my_testcase", lunit.testcase, package.seeall )
+
+
+The tests itself in a testcase are functions whose names must begin
+or end with 'test'. The function names are case insensitive. Example:
+
+        require "lunit"
+
+        module( "my_testcase", lunit.testcase, package.seeall )
+
+        function FirstTest()
+          -- Test code goes here
+        end
+
+        function test_something()
+            -- Test code goes here
+        end
+
+
+Inside the test functions you use asserts to test your code or package.
+Lunit defines 26 assert functions:
+
+        fail( [msg] )
+
+              Always fails.
+
+        assert( assertion, [msg] )
+
+              Fails, if 'assertion' is false or nil.
+
+        assert_true( actual, [msg] )
+
+              Fails, if 'actual' isn't true.
+
+        assert_false( actual, [msg] )
+
+              Fails, if 'actual' isn't false. (Even fails if 'actual' is
+              a nil value!)
+
+        assert_equal( expected, actual, [msg] )
+
+              Fails, if 'actual' is different from 'expected'. Make sure
+              that you don't mix 'expected' and 'actual' because they are
+              used to build a nice error message.
+
+        assert_not_equal( unexpected, actual, [msg] )
+
+              Fails, if 'actual' and 'unexpected' are equal.
+
+        assert_match( pattern, actual, [msg] )
+
+              Fails, if the string 'actual' doesn't match 'pattern'.
+
+        assert_not_match( pattern, actual, [msg] )
+
+              Fails, if the string 'actual' match 'pattern'.
+
+        assert_nil( actual, [msg] )
+
+              Fails, if 'actual' isn't a nil value.
+
+        assert_not_nil( actual, [msg] )
+
+              Fails, if 'actual' is a nil value.
+
+        assert_boolean( actual, [msg] )
+
+              Fails, if 'actual' isn't true or false.
+
+        assert_not_boolean( actual, [msg] )
+
+              Fails, if 'actual' is true or false.
+
+        assert_number( actual, [msg] )
+
+              Fails, if 'actual' isn't a number.
+
+        assert_not_number( actual, [msg] )
+
+              Fails, if 'actual' is a number.
+
+        assert_string( actual, [msg] )
+
+              Fails, if 'actual' isn't a string.
+
+        assert_not_string( actual, [msg] )
+
+              Fails, if 'actual' is a string.
+
+        assert_table( actual, [msg] )
+
+              Fails, if 'actual' isn't a table.
+
+        assert_not_table( actual, [msg] )
+
+              Fails, if 'actual' is a table.
+
+        assert_function( actual, [msg] )
+
+              Fails, if 'actual' isn't a function.
+
+        assert_not_function( actual, [msg] )
+
+              Fails, if 'actual' is a function.
+
+        assert_thread( actual, [msg] )
+
+              Fails, if 'actual' isn't a thread (created by
+              coroutine.create or coroutine.wrap).
+
+        assert_not_thread( actual, [msg] )
+
+              Fails, if 'actual' is a thread.
+
+        assert_userdata( actual, [msg] )
+
+              Fails, if 'actual' isn't userdata.
+
+        assert_not_userdata( actual, [msg] )
+
+              Fails, if 'actual' is userdata.
+
+        assert_error( [msg], func )
+
+              Fails, if 'func' doesn't raises an error (using error()).
+
+        assert_pass( [msg], func )
+
+              Fails, if 'func' raises an error.
+
+
+All assert functions take an optional message as the last argument. Only 
+assert_pass() and assert_error() require the optional message as the first
+argument. The last argument of these two are functions.
+
+There are also useful functions to test for the type of a value:
+
+        is_nil( actual )
+        is_boolean( actual )
+        is_number( actual )
+        is_string( actual )
+        is_table( actual )
+        is_function( actual )
+        is_thread( actual )
+        is_userdata( actual )
+
+These all returns true if 'actual' is of correct type, otherwise false. 
+
+You use the assert functions and the is_type functions in your tests to check
+your code or package. Example:
+
+        require "lunit"
+
+        module( "my_testcase", lunit.testcase, package.seeall )
+
+        function FirstTest()
+          local result = compute_some_value()
+          assert_string( result )
+          assert_equal("foobar", result)
+        end
+
+        function test_something()
+          local result = flip_coin()	-- flip_coin returns at random 0 or 1
+          assert_number(result)
+          if result == 0 then
+            -- ok
+          elseif result == 1 then
+            -- ok
+          else
+            fail("flip_coin: invalid number: "..tostring(result))
+          end
+        end
+
+
+You can define the functions setup() and teardown() if you have to allocate
+some resources or obtain some handles for your tests.
+The setup() function is called before every test and teardown() is
+called after every test. Example:
+
+        require "lunit"
+
+        module( "resource_testcase", lunit.testcase, package.seeall )
+
+        local orig_content, handle
+
+        function setup()
+          orig_content = { "row 1", "row 2", "row 3" }
+          handle = database_open("test.db")
+          database_create_table(handle, ...)
+          database_fill_table(handle, orig_content, ...)
+        end
+
+        function teardown()
+          database_drop_table(handle, ...)
+          database_close(handle)
+          handle = nil
+          orig_content = nil
+          delete_file("test.db")
+        end
+
+        function test_select()
+          local content = database_select(handle, ...)
+          assert_table( content )
+          assert_equal( orig_content, content )
+        end
+
+        function test_insert()
+          database_insert(handle, "row 4", ...)
+          local content = database_select(handle, ...)
+          assert_table( content )
+          assert_equal( { "row 1", "row 2", "row 3", "row 4" }, content )
+        end
+
+        function test_delete()
+          database_delete(handle, "row 2", ...)
+          local content = database_select(handle, ...)
+          assert_table( content )
+          assert_equal( { "row 1", "row 3" }, content )
+        end
+
+
+To run your testcases, simply use the shell script "lunit". Example:
+
+        # ./lunit my_testcase.lua
+

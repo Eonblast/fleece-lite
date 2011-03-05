@@ -1,0 +1,15 @@
+
+                 Lunit Release 0.5
+                ===================
+
+Lunit is a unit testing framework for lua, written in lua. 
+
+Lunit provides 27 assert functions, and a few misc functions
+for usage in an easy unit testing framework.
+
+Lunit comes with a test suite to test itself. The testsuite
+consists of approximately 710 assertions.
+
+Lunit is licensed under the MIT license.
+
+Lunit can downloaded from http://www.mroth.net/lunit/

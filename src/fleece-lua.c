@@ -2,7 +2,7 @@
 *** Package     : Fleece Lite - Lua to JSON conversion                      ***
 *** File        : fleece-lua.c                                              ***
 *** Description : interface to to Lua                                       ***
-*** Version     : 0.2.2 / alpha                                             ***
+*** Version     : 0.2.3 / alpha                                             ***
 *** Requirement : Lua 5.1.4 - 5.1.4-2                                       ***
 *** Copyright   : 2011 Henning Diedrich, Eonblast Corporation               ***
 *** Author      : H. Diedrich <hd2010@eonblast.com>                         ***
@@ -21,6 +21,8 @@
 ***  Header files not cleaned up.                                           ***
 ***                                                                         ***
 ***-------------------------------------------------------------------------**/
+
+#include "fleece-config.h"
 
 LUALIB_API int luaopen_fleece (lua_State *L);
 static int fleece_size(lua_State *L);
@@ -110,6 +112,10 @@ static int fleece_size(lua_State *L) {
  */
 static int fleece_json(lua_State *L) {
 
+	#if VERBOSITY >= 5
+	printf("\n----------------------------------------------\n");
+	#endif
+
 	insp_ctrl ctrl;
 	insp_ctrl_init(&ctrl, L);
 
@@ -119,6 +125,11 @@ static int fleece_json(lua_State *L) {
 
 	insp_ctrl_close(&ctrl); 
 	free_collapsed(freer); // (keeps lucky)
+
+	#if VERBOSITY >= 5
+	printf("\n==============================================\n");
+	#endif
+	
 	return 1;
 	
 	/* *) Pushes the zero-terminated string pointed to by s onto the

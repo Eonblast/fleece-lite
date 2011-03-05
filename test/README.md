@@ -1,6 +1,6 @@
 <div class=head></div>
 
-**Eonblast Fleece 0.2.2**
+**Eonblast Fleece 0.2.3**
 
 Tests, Benchmarks, Comparison
 -----------------------------
@@ -20,6 +20,10 @@ If somebody has the bench code behind the numbers at http://lua-users.org/wiki/J
 LuaJSON needed slight modifications for me to compile, see /* hd */ tags int the source. It sometimes crashes for me on one Mac, not sure why. To take the blame from Fleece, try bench3a then. Luajson comes with this package, in etc/luajson and can be made with 'make &lt;PLATFORM>-test'.
  
 Installing Lua-Yajl is no real fun and you may want to skip that if your interest in the benchmarks is casual. There is no support for installing lua-yajl. You'll miss out on bench4, 5 and 5c but that is no real loss as Lua-Yajl beforms by and large similar to LuaJSON. Make sure to run 5a once and let me know if you ran into trouble (an eventual out of memory is ok).
+
+	unit/                  unit tests, use `make unit-tests`
+		basic.lua          fast, basic unit tests 
+		complex.lua        long, generated unit tests
 
 	test-fleece-hello.lua  Most simple check if fleece is working
 	test-fleece-json.lua   Converts a minimal-table

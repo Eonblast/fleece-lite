@@ -2,7 +2,7 @@
 --- Package     : Fleece - fast Lua to JSON module                          ---
 --- File        : test-fleece-rand.lua                                      ---
 --- Description : test: short, random, nested tables are converted, printed ---
---- Version     : 0.2.2 / alpha                                             ---
+--- Version     : 0.2.3 / alpha                                             ---
 --- Copyright   : 2011 Henning Diedrich, Eonblast Corporation               ---
 --- Author      : H. Diedrich <hd2010@eonblast.com>                         ---
 --- License     : see file LICENSE                                          ---

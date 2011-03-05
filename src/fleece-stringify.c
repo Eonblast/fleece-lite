@@ -2,7 +2,7 @@
 *** File        : Fleece - Lua to JSON module                               ***
 *** File        : fleece-stringify.c                                        ***
 *** Description : Traverse Lua data and create the JSON string              ***
-*** Version     : 0.2.2 / alpha                                             ***
+*** Version     : 0.2.3 / alpha                                             ***
 *** Requirement : Lua 5.1.4 - 5.1.4-2                                       ***
 *** Copyright   : 2011 Henning Diedrich, Eonblast Corporation               ***
 *** Author      : H. Diedrich <hd2010@eonblast.com>                         ***
@@ -81,13 +81,13 @@ void stringify_node(insp_ctrl *ctrl, Node * n, size_t count);
     { \
 /*		buffer_fadd5(_ctrl, // TODO: MAKE AT LEAST THIS FIX. TO SAVE BIG. \
 			pre, '"', svalue(_o), '"', post, tsvalue(_o)->len);		 */\
-		buffer_add_char(_ctrl, '"'); \
+		buffer_add_char_blindly(_ctrl, '"'); \
 		buffer_add_string(_ctrl, svalue(_o), tsvalue(_o)->len); \
-		buffer_add_char(_ctrl, '"'); \
+		buffer_add_char_blindly(_ctrl, '"'); \
     } \
     else if (ttistable(_o)) \
     { \
-		buffer_add_char(_ctrl, '{'); \
+		buffer_add_char_safely(_ctrl, '{'); \
 		char *bracket = dynp(_ctrl->parts_list_last) -1; \
 \
 		size_t count = 1; \
@@ -110,17 +110,21 @@ void stringify_node(insp_ctrl *ctrl, Node * n, size_t count);
 			pure = 0; /* switch for below */\
 		} \
 		if(count == 1) /* empty array = always array, not object */ { \
-			buffer_add_char(_ctrl, ']'); \
+			buffer_add_char_safely(_ctrl, ']'); \
 			*bracket='['; \
 		} \
 		else if(pure) /* array, not empty */ { \
 			/* writes over last ',' */\
 			*(dynp(_ctrl->parts_list_last) -1)=']'; \
+			/* (*) must therefore assert buffer, as could be part of ]]]... */\
+			buffer_assert(_ctrl, 0); /* sic */\
 			*bracket='['; \
 		} \
 		else /* object */ { \
 			/* writes over last ',' */\
 			*(dynp(_ctrl->parts_list_last) -1)='}'; \
+			/* (*) must therefore assert buffer, as could be part of }}}... */\
+			buffer_assert(_ctrl, 0); /* sic */\
 		} \
     } \
     else if (ttisfunction(_o)) \
@@ -150,7 +154,7 @@ void stringify_node(insp_ctrl *ctrl, Node * n, size_t count);
 /* primitives ------------------------------------------------------ */
 /* ----------------------------------------------------------------- */
 
-void stringify_placeholder(insp_ctrl *ctrl, const char const* S, const size_t len)
+void stringify_placeholder(insp_ctrl *ctrl, const char *S, const size_t len)
 {
 	buffer_add_string(ctrl, S, len);
 }
@@ -186,14 +190,15 @@ void stringify_array_part (insp_ctrl *ctrl, const Table *t, size_t *count, int *
 			    itoa(i, dynp(ctrl->parts_list_last), &len);
 			    ctrl->parts_list_last->len += len;
 			    ctrl->total_len += len;
-				buffer_add_char(ctrl, ':'); // TODO ... flags, pure arrays ...
+				buffer_add_char_blindly(ctrl, ':'); // TODO ... flags, pure arrays ...
 				if(try) { (*count)++; *pure = 0; *tried = 1; return; } /* cancel and redo */
 				pu = 0;
 			} else
 				try = 1; /* we try to stay w/o key = pure */
 			(*count)++;
 			stringify_value_macro(ctrl, v); 
-			buffer_add_char(ctrl, ','); // TODO ... flags, pure arrays ...
+			/* this must not go entirely blind but is taken care of here (*) */
+			buffer_add_char_blindly(ctrl, ','); // TODO ... flags, pure arrays ...
 		}
     }
     *pure = pu;
@@ -215,9 +220,9 @@ void stringify_hash_part (insp_ctrl *ctrl, const Table *t, size_t *count, int *p
 		if(!ttisnil(key2tval(node)) && !ttisnil(gval(node))) {
 			(*count)++;
 			stringify_value_macro(ctrl, key2tval(node));
- 			buffer_add_char(ctrl, ':');
+ 			buffer_add_char_blindly(ctrl, ':');
 			stringify_value_macro(ctrl, gval(node));
-			buffer_add_char(ctrl, ',');
+			buffer_add_char_safely(ctrl, ',');
 			pure = 0;
 		}
 	}
@@ -230,6 +235,10 @@ void stringify_hash_part (insp_ctrl *ctrl, const Table *t, size_t *count, int *p
  */
 char *fleece_stringify(insp_ctrl *ctrl, const TValue *o, void **freer)
 {
+	#if VERBOSITY >= 8
+	printf("fleece_stringify()\n");
+	#endif
+
 	stringify_value_macro(ctrl, o);
 
 	/* IMPORTANT: last 0, in case of not FLEECE_ALWAYS_DELIMIT. As the buffer is reused. */

@@ -2,7 +2,7 @@
 ### Package     : Fleece - fast Lua to JSON conversion                      ###
 ### File        : ./Makefile                                                ###
 ### Description : Main make file, building, tests, benchmarks               ###
-### Version     : 0.2.2 / alpha                                             ###
+### Version     : 0.2.3 / alpha                                             ###
 ### Copyright   : 2011 Henning Diedrich, Eonblast Corporation               ###
 ### Author      : H. Diedrich <hd2010@eonblast.com>                         ###
 ### License     : see file LICENSE                                          ###
@@ -82,6 +82,28 @@ bench4:
 bench5:
 	lua test/bench5.lua
 	@echo Also see test/README.md
+
+unit-tests:
+	@echo "======================="
+	@echo "Fleece Basic Unit Tests"
+	@echo "======================="
+	etc/lunit/lunit --path "etc/lunit/?.lua;test/unit/?.lua" test/unit/basic.lua
+	@echo "========================="
+	@echo "Fleece Copmlex Unit Tests"
+	@echo "========================="
+	etc/lunit/lunit --path "etc/lunit/?.lua;test/unit/?.lua" test/unit/complex.lua
+
+upversion:
+	sed -E -e s/0\.2\.2/0.2.3/g -i .bak test/*
+	sed -E -e s/0\.2\.2/0.2.3/g -i .bak test/unit/*
+	sed -E -e s/0\.2\.2/0.2.3/g -i .bak src/*
+	sed -E -e s/0\.2\.2/0.2.3/g -i .bak etc/*
+	sed -E -e s/0\.2\.2/0.2.3/g -i .bak include/*	
+
+delbak:
+	rm -f *.bak
+	rm -f */*.bak
+	rm -f */*/*.bak
 
 clean:
 	cd src && $(MAKE) $@

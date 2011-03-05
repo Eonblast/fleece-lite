@@ -1,0 +1,12 @@
+This is lunit Version 0.5.
+
+Lunit is a unit testing framework for lua.
+
+To learn more about lunit take a look in ANNOUNCE
+and look in DOCUMENTATION and check example.lua.
+
+If you have suggestions, questions or feature request please
+feel free to contact me.
+
+
+Michael Roth <mroth@nessie.de>
