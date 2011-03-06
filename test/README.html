@@ -3,31 +3,78 @@
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 	<title>Tests, Benchmarks, Comparison</title>
-	<link rel="stylesheet" type="text/css" href="default.css" />
+	<style type="text/css"><!--
+body 	  { font-family: "Century Gothic", Verdana, Helvetica, Arial, sans-serif; 
+			margin: 0; }
+
+div.body  { padding: 4em 5em 1em 5em; }
+
+a 		  { color: #989156; 
+		    text-decoration: none; }
+
+a:visited { color: gold; }
+
+a:hover   { color: orange; }
+
+
+pre.code,
+pre  { background-color: #f0f0f0; 
+	        padding: 1em;
+    	    border-bottom-left-radius: 1em; 
+        	-moz-border-radius-bottomleft: 1em; 
+	        border-top-right-radius: 1em; 
+    	    -moz-border-radius-topright: 1em; 
+          }
+
+pre.codelast  { background-color: #f0f0f0; 
+	        padding: 1em;
+    	    border-bottom-left-radius: 1em; 
+        	-moz-border-radius-bottomleft: 1em; 
+	        border-bottom-right-radius: 1.2em; 
+    	    -moz-border-radius-bottomright: 1.2em; 
+          }
+
+div.head { border: 0;
+           border-top-left-radius: 20px 7px; 
+           -moz-border-radius-topleft: 20px 7px; 
+           border-bottom-right-radius: 	35px 30px; 
+           -moz-border-radius-bottomright: 50px 15px; 
+		   background: url(../etc/images/fleece-footer-1.1.png) no-repeat top right;
+           height:81px; padding: 0; margin: 0; 
+         }  
+
+div.foot { border: 0; 
+		   border-top-left-radius: 15px; 
+		   -moz-border-radius-topleft: 15px; 
+           border-bottom-right-radius: 15px; 
+           -moz-border-radius-bottomright: 15px; 
+           background: url(../etc/images/fleece-footer-1.1.png) no-repeat bottom left;
+           height:31px; padding: 0; margin: 0; 
+         }  
+
+--></style>
 </head>
 <body>
-
-
 <div class=head></div>
+<div class=body>
 
-
-<p><strong>Eonblast Fleece 0.2.3</strong></p>
+<p><strong>Eonblast Fleece 0.2.4</strong></p>
 
 <h2>Tests, Benchmarks, Comparison</h2>
 
 <p>This folder offers benchmarks and supports comparison of Fleece with:</p>
 
 <ul>
-    <li><strong>JSON4 0.9.50</strong>: aka JSON4Lua, JSON for Lua, module name 'json' http://json.luaforge.net/</li>
-    <li><strong>LuaJSON 1.1</strong>: aka luajsonlib, LuaJSON C Library http://luaforge.net/projects/luajsonlib/</li>
-    <li><strong>Lua-Yajl 1.0.9</strong>: with Oct '10  bindings https://github.com/brimworks/lua-yajl/</li>
+    <li><strong>JSON4 0.9.50</strong>: aka JSON4Lua, JSON for Lua, module name 'json' <a href="http://json.luaforge.net/">http://json.luaforge.net/</a></li>
+    <li><strong>LuaJSON 1.1</strong>: aka luajsonlib, LuaJSON C Library <a href="http://luaforge.net/projects/luajsonlib/">http://luaforge.net/projects/luajsonlib/</a></li>
+    <li><strong>Lua-Yajl 1.0.9</strong>: with Oct '10  bindings <a href="https://github.com/brimworks/lua-yajl/">https://github.com/brimworks/lua-yajl/</a></li>
 </ul>
 
 <p>Note that the names of the various Lua-JSON packages can be confusing. They are not unique and therefore 'JSON4' and 'LuaJSON' are chosen here to clarify which packages are meant. They don't always call themselves this way.</p>
 
-<p>JSON4 is native Lua, LuaJSON and Lua-Yajl are C libraries for Lua and thus faster. JSON4 is listed as 'cmjjson' with the comparisons at http://lua-users.org/wiki/JsonModules. </p>
+<p>JSON4 is native Lua, LuaJSON and Lua-Yajl are C libraries for Lua and thus faster. JSON4 is listed as 'cmjjson' with the comparisons at <a href="http://lua-users.org/wiki/JsonModules">http://lua-users.org/wiki/JsonModules</a>. </p>
 
-<p>If somebody has the bench code behind the numbers at http://lua-users.org/wiki/JsonModules, please let me know.</p>
+<p>If somebody has the bench code behind the numbers at <a href="http://lua-users.org/wiki/JsonModules">http://lua-users.org/wiki/JsonModules</a>, please let me know.</p>
 
 <p>LuaJSON needed slight modifications for me to compile, see /* hd */ tags int the source. It sometimes crashes for me on one Mac, not sure why. To take the blame from Fleece, try bench3a then. Luajson comes with this package, in etc/luajson and can be made with 'make &lt;PLATFORM>-test'.</p>
 
@@ -102,26 +149,7 @@ Lua 5.1 official
 Note that fleece may list associative arrays in different order.
 </code></pre>
 
-
-
-<pre>
-<style>
-div.head { border: 0; border-top-left-radius: 7px; 
-           border-bottom-right-radius: 15px; 
-           background: url(../etc/images/fleece-footer-1.1.png) no-repeat top right;
-           height:81px; padding: 0; margin: 0; }  
-div.foot { border: 0; border-bottom-left-radius: 15px; 
-           border-bottom-right-radius: 15px; 
-           background: url(../etc/images/fleece-footer-1.1.png) no-repeat bottom left;
-           height:31px; padding: 0; margin: 0; }  
-</style>
-</pre>
-
 <hr/>
-<p>README fleece/test hd Feb 2011 - powered by Eonblast http://www.eonblast.com</p>
+<p>README fleece/test hd Mar 2011 - powered by Eonblast <a href="http://www.eonblast.com">http://www.eonblast.com</a></p>
 
-
-<div class=foot></div>
-
-
-</body></html>
+<br /><center><small style='color:gray'>&copy; 2011 <a href=http://www.eonblast.com style='color:gray'>Eonblast Corporation</a></small></center></div><div class=foot></div></body></html>

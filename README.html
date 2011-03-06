@@ -2,16 +2,63 @@
 <html>
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-	<title>Eonblast Fleece 0.2.3 Lite</title>
-	<link rel="stylesheet" type="text/css" href="default.css" />
+	<title>Eonblast Fleece 0.2.4 Lite</title>
+	<style type="text/css"><!--
+body 	  { font-family: "Century Gothic", Verdana, Helvetica, Arial, sans-serif; 
+			margin: 0; }
+
+div.body  { padding: 4em 5em 1em 5em; }
+
+a 		  { color: #989156; 
+		    text-decoration: none; }
+
+a:visited { color: gold; }
+
+a:hover   { color: orange; }
+
+
+pre.code,
+pre  { background-color: #f0f0f0; 
+	        padding: 1em;
+    	    border-bottom-left-radius: 1em; 
+        	-moz-border-radius-bottomleft: 1em; 
+	        border-top-right-radius: 1em; 
+    	    -moz-border-radius-topright: 1em; 
+          }
+
+pre.codelast  { background-color: #f0f0f0; 
+	        padding: 1em;
+    	    border-bottom-left-radius: 1em; 
+        	-moz-border-radius-bottomleft: 1em; 
+	        border-bottom-right-radius: 1.2em; 
+    	    -moz-border-radius-bottomright: 1.2em; 
+          }
+
+div.head { border: 0;
+           border-top-left-radius: 20px 7px; 
+           -moz-border-radius-topleft: 20px 7px; 
+           border-bottom-right-radius: 	35px 30px; 
+           -moz-border-radius-bottomright: 50px 15px; 
+		   background: url(etc/images/fleece-footer-1.1.png) no-repeat top right;
+           height:81px; padding: 0; margin: 0; 
+         }  
+
+div.foot { border: 0; 
+		   border-top-left-radius: 15px; 
+		   -moz-border-radius-topleft: 15px; 
+           border-bottom-right-radius: 15px; 
+           -moz-border-radius-bottomright: 15px; 
+           background: url(etc/images/fleece-footer-1.1.png) no-repeat bottom left;
+           height:31px; padding: 0; margin: 0; 
+         }  
+
+--></style>
 </head>
 <body>
-
-
 <div class=head></div>
+<div class=body>
 
-
-<h1>Eonblast Fleece 0.2.3 Lite</h1>
+<h1>Eonblast Fleece 0.2.4 Lite</h1>
 
 <p><strong>Fast Lua to JSON conversion.</strong></p>
 
@@ -30,24 +77,27 @@
 
 <p><strong>Build</strong>, at this point, Linux and Mac OS X only:</p>
 
-<pre><code>make linux # or make macosx, or make macosx-old for &lt;= 10.3
+<pre><code>make linux # or linux-64, macosx, or make macosx-old (for &lt;= 10.3)
 </code></pre>
 
 <p>Please contribute your platform's make instructions, thanks.</p>
 
+
 <p><strong>Testing:</strong></p>
 
 <pre><code>make test
-make unit-test # long
+make unit-tests # long
 </code></pre>
+
 
 <p><strong>Benchmarking:</strong></p>
 
 <pre><code>make bench
 make bench2
-make macosx-test # or linux-test, or macosx-old-test
+make macosx-test # or linux-test, linux-64-test or macosx-old-test
 make bench3
 </code></pre>
+
 
 <p><strong>Sample:</strong></p>
 
@@ -57,10 +107,12 @@ json_str = fleece.json(t)
 
 <p>Fleece works with Lua 5.1.4 and 5.1.4-2, it can be adapted to other Lua versions or LuaJIT and will be ported to 5.2. Part of its speed advantage over other JSON packages is derived from the fact that it accesses the Lua table data at the core C level, below the Lua C API, which frees a significant number of cycles. It also uses a string buffer that is custom designed for the specific task of building a JSON string. It uses custom programmed, faster float and integer conversion and at the expense of some memory consumtion, it keeps some string and lookup buffers around once initialized, for the next encoding. Performance can be tuned by tweaking buffer sizes at compile time, by setting defines in src/fleece-intern.h. The defaults are set for Fleece to produce standard JSON reasonably fast.</p>
 
+
 <h2>Functions</h2>
 
 <p><strong>fleece.json()</strong> - convert (stringify) a Lua value to a JSON string <br/>
 <strong>fleece.size()</strong> - dry run to find the JSON result size, without creating it  </p>
+
 
 <h2>Road Map</h2>
 
@@ -94,6 +146,16 @@ json_str = fleece.json(t)
 
 <h2>History</h2>
 
+<p><strong>0.2.4 lite</strong> - 06 Mar 2011 - hd  </p>
+
+<ul>
+    <li>added linux 64 bit make instructions  </li>
+    <li>fixed memory corruption on 64bit Linux  </li>
+    <li>added buffer end sanity tag  </li>
+    <li>enhanced formatting of html pages  </li>
+    <li>added luajson to etc  </li>
+</ul>
+
 <p><strong>0.2.3 lite</strong> - 05 Mar 2011 - hd  </p>
 
 <ul>
@@ -104,6 +166,7 @@ json_str = fleece.json(t)
     <li>verbosity and selftest cond compiles added  </li>
     <li>unified verbosity and selftest definition  </li>
     <li>added main config header  </li>
+    <li>added lunit to etc</li>
 </ul>
 
 <p><strong>0.2.2 lite</strong> - 03 Mar 2011 - hd  </p>
@@ -111,6 +174,22 @@ json_str = fleece.json(t)
 <ul>
     <li>first pulished version  </li>
 </ul>
+
+<h2>Credits</h2>
+
+<p>Thany you to these contributors to the Lua ecosystem:</p>
+
+<p><strong>Nathaniel Musgrove: LuaJSON</strong> <br/>
+Serving as starting point and continuous reference during development</p>
+
+<p><strong>Craig Mason-Jones: JSON4Lua</strong> <br/>
+The complentary, easiest and most robust solution around</p>
+
+<p><strong>Michael Roth: lunit</strong>
+Straight forward Unit Testing</p>
+
+<p><strong>Niklas Frykholm: Markdown.lua</strong> <br/>
+Invaluable preview and doc tool</p>
 
 
 <h2>License</h2>
@@ -137,26 +216,7 @@ WHETHER IN AN ACTION OF  CONTRACT,  TORT  OR OTHERWISE,  ARISING
 FROM,  OUT OF OR  IN CONNECTION WITH THE SOFTWARE  OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.</p>
 
-
-<pre>
-<style>
-div.head { border: 0; border-top-left-radius: 7px; 
-           border-bottom-right-radius: 15px; 
-           xbackground: url(http://www.eonblast.com/images/fleece-footer-1.1.png) no-repeat top right;
-           background: url(etc/images/fleece-footer-1.1.png) no-repeat top right;
-           height:81px; padding: 0; margin: 0; }  
-div.foot { border: 0; border-bottom-left-radius: 15px; 
-           border-bottom-right-radius: 15px; 
-           background: url(etc/images/fleece-footer-1.1.png) no-repeat bottom left;
-           height:31px; padding: 0; margin: 0; }  
-</style>
-</pre>
-
 <hr/>
-<p>README fleece hd Feb 2011 - powered by Eonblast http://www.eonblast.com</p>
+<p>README fleece hd Mar 2011 - powered by Eonblast http://www.eonblast.com</p>
 
-
-<div class=foot></div>
-
-
-</body></html>
+<br /><center><small style='color:gray'>&copy; 2011 <a href=http://www.eonblast.com style='color:gray'>Eonblast Corporation</a></small></center></div><div class=foot></div></body></html>

@@ -1,6 +1,4 @@
-<div class=head></div>
-
-# Eonblast Fleece 0.2.3 Lite
+# Eonblast Fleece 0.2.4 Lite
 
 **Fast Lua to JSON conversion.**
 
@@ -18,21 +16,24 @@ Please send any kind of feedback my way, bugs, docs, source, comments. Thank you
 
 **Build**, at this point, Linux and Mac OS X only:
 
-	make linux # or make macosx, or make macosx-old for <= 10.3
+	make linux # or linux-64, macosx, or make macosx-old (for <= 10.3)
 
 Please contribute your platform's make instructions, thanks.
+
 
 **Testing:**
 
 	make test
-	make unit-test # long
+	make unit-tests # long
+
 
 **Benchmarking:**
 
 	make bench
 	make bench2
-	make macosx-test # or linux-test, or macosx-old-test
+	make macosx-test # or linux-test, linux-64-test or macosx-old-test
 	make bench3
+
 
 **Sample:**
 
@@ -41,10 +42,12 @@ Please contribute your platform's make instructions, thanks.
 	
 Fleece works with Lua 5.1.4 and 5.1.4-2, it can be adapted to other Lua versions or LuaJIT and will be ported to 5.2. Part of its speed advantage over other JSON packages is derived from the fact that it accesses the Lua table data at the core C level, below the Lua C API, which frees a significant number of cycles. It also uses a string buffer that is custom designed for the specific task of building a JSON string. It uses custom programmed, faster float and integer conversion and at the expense of some memory consumtion, it keeps some string and lookup buffers around once initialized, for the next encoding. Performance can be tuned by tweaking buffer sizes at compile time, by setting defines in src/fleece-intern.h. The defaults are set for Fleece to produce standard JSON reasonably fast.
 
+
 ## Functions
 
 **fleece.json()** - convert (stringify) a Lua value to a JSON string  
 **fleece.size()** - dry run to find the JSON result size, without creating it  
+
 
 ## Road Map 
 
@@ -74,6 +77,14 @@ This License is valid for Fleece Lite. It is not applicable for the master branc
 
 ## History
 
+**0.2.4 lite** - 06 Mar 2011 - hd  
+
+* added linux 64 bit make instructions  
+* fixed memory corruption on 64bit Linux  
+* added buffer end sanity tag  
+* enhanced formatting of html pages  
+* added luajson to etc  
+
 **0.2.3 lite** - 05 Mar 2011 - hd  
 
 * added unit tests, basic and complex, generated cases  
@@ -83,10 +94,27 @@ This License is valid for Fleece Lite. It is not applicable for the master branc
 * verbosity and selftest cond compiles added  
 * unified verbosity and selftest definition  
 * added main config header  
+* added lunit to etc
   
 **0.2.2 lite** - 03 Mar 2011 - hd  
 
 * first pulished version  
+
+## Credits
+
+Thany you to these contributors to the Lua ecosystem:
+
+**Nathaniel Musgrove: LuaJSON**  
+Serving as starting point and continuous reference during development
+
+**Craig Mason-Jones: JSON4Lua**  
+The complentary, easiest and most robust solution around
+
+**Michael Roth: lunit**
+Straight forward Unit Testing
+
+**Niklas Frykholm: Markdown.lua**  
+Invaluable preview and doc tool
 
 
 ## License
@@ -113,20 +141,5 @@ WHETHER IN AN ACTION OF  CONTRACT,  TORT  OR OTHERWISE,  ARISING
 FROM,  OUT OF OR  IN CONNECTION WITH THE SOFTWARE  OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 
-<pre>
-<style>
-div.head { border: 0; border-top-left-radius: 7px; 
-           border-bottom-right-radius: 15px; 
-           xbackground: url(http://www.eonblast.com/images/fleece-footer-1.1.png) no-repeat top right;
-           background: url(etc/images/fleece-footer-1.1.png) no-repeat top right;
-           height:81px; padding: 0; margin: 0; }  
-div.foot { border: 0; border-bottom-left-radius: 15px; 
-           border-bottom-right-radius: 15px; 
-           background: url(etc/images/fleece-footer-1.1.png) no-repeat bottom left;
-           height:31px; padding: 0; margin: 0; }  
-</style>
-</pre>
 _______________________________________________________________________
-README fleece hd Feb 2011 - powered by Eonblast http://www.eonblast.com
-
-<div class=foot></div>
+README fleece hd Mar 2011 - powered by Eonblast http://www.eonblast.com

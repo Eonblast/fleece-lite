@@ -2,7 +2,7 @@
 *** Packages    : Fleece - fast Lua to JSON module                          ***
 *** File        : fleece-buffers.h                                          ***
 *** Description : header, incl. main macros for custom string buffers       ***
-*** Version     : 0.2.3 / alpha                                             ***
+*** Version     : 0.2.4 / alpha                                             ***
 *** Requirement : self sufficient ANSI C                                    ***
 *** Copyright   : 2011 Henning Diedrich, Eonblast Corporation               ***
 *** Author      : H. Diedrich <hd2010@eonblast.com>                         ***

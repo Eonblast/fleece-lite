@@ -2,7 +2,7 @@
 *** Packages    : Fleece - fast Lua to JSON module                          ***
 *** File        : fleece-config.h                                           ***
 *** Description : header with compile switches and default definitions      ***
-*** Version     : 0.2.3 / alpha                                             ***
+*** Version     : 0.2.4 / alpha                                             ***
 *** Requirement : self sufficient ANSI C                                    ***
 *** Copyright   : 2011 Henning Diedrich, Eonblast Corporation               ***
 *** Author      : H. Diedrich <hd2010@eonblast.com>                         ***
@@ -18,7 +18,7 @@
 #ifndef FLEECE_CONFIG_H
 #define FLEECE_CONFIG_H 1
 
-#define FLEECE_VERSION 0.2.3
+#define FLEECE_VERSION 0.2.4
 
 /* levels 0 to 10. 0 = none = fastest */
 #define SELFCHECK 0

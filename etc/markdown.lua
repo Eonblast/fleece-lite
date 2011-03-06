@@ -1,6 +1,8 @@
 #!/usr/bin/env lua
 
 --[[
+ADAPTED FROM:
+
 # markdown.lua -- version 0.32
 
 <http://www.frykholm.se/files/markdown.lua>
@@ -1238,6 +1240,8 @@ local function run_command_line(arg)
 	<link rel="stylesheet" type="text/css" href="STYLESHEET" />
 </head>
 <body>
+<div class=head></div>
+<div class=body>
 ]]
 			local title = options.title or s:match("<h1>(.-)</h1>") or s:match("<h2>(.-)</h2>") or 
 				s:match("<h3>(.-)</h3>") or "Untitled"
@@ -1257,7 +1261,14 @@ local function run_command_line(arg)
 			end
 			header = header:gsub("CHARSET", options.charset)
 		end
-		local footer = "</body></html>"
+		local footer = 
+			"<br />" ..
+			"<center><small style='color:gray'>" ..
+			"&copy; 2011 <a href=http://www.eonblast.com style='color:gray'>" ..
+			"Eonblast Corporation</a></small></center>" ..
+			"</div>" ..
+			"<div class=foot></div>" ..
+			"</body></html>"
 		if options.footer then
 			local f = io.open(options.footer) or error("Could not open file: " .. options.footer)
 			footer = f:read("*a")

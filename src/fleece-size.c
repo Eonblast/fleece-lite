@@ -2,7 +2,7 @@
 *** File        : Fleece - Lua to JSON module                               ***
 *** File        : fleece-size.c                                             ***
 *** Description : traverse Lua data and count the JSON string size needed   ***
-*** Version     : 0.2.3 / alpha                                             ***
+*** Version     : 0.2.4 / alpha                                             ***
 *** Requirement : Lua 5.1.4 - 5.1.4-2                                       ***
 *** Copyright   : (c) 2011 Henning Diedrich, Eonblast Corporation           ***
 *** Author      : H. Diedrich <hd2010@eonblast.com>                         ***

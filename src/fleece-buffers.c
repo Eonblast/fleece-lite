@@ -2,7 +2,7 @@
 *** Packages    : Fleece - fast Lua to JSON conversion                      ***
 *** File        : fleece-buffers.c                                          ***
 *** Description : custom string buffer for fast JSON string compilation     ***
-*** Version     : 0.2.3 / alpha                                             ***
+*** Version     : 0.2.4 / alpha                                             ***
 *** Requirement : self sufficient ANSI C                                    ***
 *** Copyright   : 2011 Henning Diedrich, Eonblast Corporation               ***
 *** Author      : H. Diedrich <hd2010@eonblast.com>                         ***
@@ -200,10 +200,11 @@ inline char *collapse_parts(string_part **first, size_t total_len, size_t pparts
        		#if (VERBOSITY >= 9)
        		printf("free buffer %p\n", part);
        		#endif
-		if(*(((char *)part) + sizeof(string_part) + part->bufsize + 1) != '$') {
-			printf("fleece [0]: ** buffer end tag  overrun (%zd/%zd): '%.*s'", part->len, part->bufsize, (int)part->bufsize +1, ((char *)part) + (sizeof(string_part)));
-			exit(193);
-		 }		
+			/* check post-end tag alive */
+			if(*(((char *)part) + sizeof(string_part) + part->bufsize + 1) != '$') {
+				printf("fleece [0]: ** buffer end tag  overrun (%zd/%zd): '%.*s'", part->len, part->bufsize, (int)part->bufsize +1, ((char *)part) + (sizeof(string_part)));
+				exit(193);
+			 }		
          	free(part); 
         } else { *(char *)lucky = 0; *(char *)(lucky+1) = 0; }
         part = next;
@@ -269,14 +270,15 @@ inline size_t free_parts(string_part *first)
 		#endif
 		// free, except if the lucky buffer: keep that
         if(part != lucky) {
-			// if (VERBOSITY >= 8)
+			#if (VERBOSITY >= 8)
 			printf("free\n"); 
-			// endif
-                	if(*(((char *)(part)) + sizeof(string_part) + part->bufsize + 1) != '$') {
-                        	printf("fleece [0]: ** buffer end tag  overrun (%zd/%zd): '%.*s'", part->len, part->bufsize, (int) part->bufsize +1, ((char *)part) + (sizeof(string_part)));
-                	        exit(193);  
-        	         }
-	                free(part);
+			#endif
+			/* check post-end tag alive */
+           	if(*(((char *)(part)) + sizeof(string_part) + part->bufsize + 1) != '$') {
+               	printf("fleece [0]: ** buffer end tag  overrun (%zd/%zd): '%.*s'", part->len, part->bufsize, (int) part->bufsize +1, ((char *)part) + (sizeof(string_part)));
+       	        exit(192);  
+   	         }
+            free(part);
 			printf("done");
         }
         else { 

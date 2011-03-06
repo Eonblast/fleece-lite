@@ -1,33 +1,33 @@
 ###-------------------------------------------------------------------------###
-### Package     : Fleece - fast Lua to JSON conversion                      ###
-### File        : ./Makefile                                                ###
-### Description : Main make file, building, tests, benchmarks               ###
-### Version     : 0.2.3 / alpha                                             ###
-### Copyright   : 2011 Henning Diedrich, Eonblast Corporation               ###
-### Author      : H. Diedrich <hd2010@eonblast.com>                         ###
-### License     : see file LICENSE                                          ###
-### Created     :    Feb 2011                                               ###
-### Changed     : 02 Mar 2011                                               ###
+### Package		: Fleece - fast Lua to JSON conversion						###
+### File		: ./Makefile												###
+### Description : Main make file, building, tests, benchmarks				###
+### Version		: 0.2.4 / alpha 											###
+### Copyright	: 2011 Henning Diedrich, Eonblast Corporation				###
+### Author		: H. Diedrich <hd2010@eonblast.com>							###
+### License		: see file LICENSE											###
+### Created		:	 Feb 2011												###
+### Changed		: 06 Mar 2011												###
 ###-------------------------------------------------------------------------###
-###                                                                         ###
-###  Fleece is optimized for the fastest Lua to JSON conversion and beats   ###
-###  other JSON implementations by around 10 times, native Lua up to 100x.  ###
-###                                                                         ###
+###																			###
+###	 Fleece is optimized for the fastest Lua to JSON conversion and beats	###
+###	 other JSON implementations by around 10 times, native Lua up to 100x.	###
+###																			###
 ###-------------------------------------------------------------------------###
-###                                                                         ###
-###  Also see src/Makefile, src/fleece-intern.h and etc/luajson/Makefile.   ###
-###                                                                         ###
-###  PLEASE CONTRIBUTE YOUR LINUX, WINDOWS OR OTHER PLATFORM'S LINES        ###
-###  FOR src/Makefile and etc/luajson/Makefile. Thank you.                  ###
-###                                                                         ###
+###																			###
+###	 Also see src/Makefile, src/fleece-intern.h and etc/luajson/Makefile.	###
+###																			###
+###	 PLEASE CONTRIBUTE YOUR LINUX, WINDOWS OR OTHER PLATFORM'S LINES		###
+###	 FOR src/Makefile and etc/luajson/Makefile. Thank you.					###
+###																			###
 ###-------------------------------------------------------------------------###
-###                                                                         ###
-###  Build: make <PLATFORM>                                                 ###
-###  Test:  make test                                                       ###
-###  Bench: make bench                                                      ###
-###                                                                         ###
-###  Run 'make' without arguments for more info and a list of platforms.    ###
-###                                                                         ###
+###																			###
+###	 Build: make <PLATFORM>													###
+###	 Test:	make test														###
+###	 Bench: make bench														###
+###																			###
+###	 Run 'make' without arguments for more info and a list of platforms.	###
+###																			###
 ###-------------------------------------------------------------------------###
 
 # Your platform. See PLATS for possible values.
@@ -58,7 +58,7 @@ test:
 test2:
 	lua test/test-fleece-rand.lua
 
-test-test:
+test3:
 	lua test/test-json4.lua
 	lua test/test-luajson.lua
 	# lua test/test-yajl.lua
@@ -75,6 +75,14 @@ bench3:
 	lua test/bench3.lua
 	@echo Also see test/README.md
 
+bench3a:
+	lua test/bench3a.lua
+	@echo Also see test/README.md
+
+bench3b:
+	lua test/bench3b.lua
+	@echo Also see test/README.md
+
 bench4:
 	lua test/bench4.lua
 	@echo Also see test/README.md
@@ -82,6 +90,26 @@ bench4:
 bench5:
 	lua test/bench5.lua
 	@echo Also see test/README.md
+
+bench5a:
+	lua test/bench5a.lua
+	@echo Also see test/README.md
+
+bench5b:
+	lua test/bench5b.lua
+	@echo Also see test/README.md
+
+basic-unit-tests:
+	@echo "======================="
+	@echo "Fleece Basic Unit Tests"
+	@echo "======================="
+	etc/lunit/lunit --path "etc/lunit/?.lua;test/unit/?.lua" test/unit/basic.lua
+
+complex-unit-tests:
+	@echo "========================="
+	@echo "Fleece Copmlex Unit Tests"
+	@echo "========================="
+	etc/lunit/lunit --path "etc/lunit/?.lua;test/unit/?.lua" test/unit/complex.lua
 
 unit-tests:
 	@echo "======================="
@@ -94,11 +122,12 @@ unit-tests:
 	etc/lunit/lunit --path "etc/lunit/?.lua;test/unit/?.lua" test/unit/complex.lua
 
 upversion:
-	sed -E -e s/0\.2\.2/0.2.3/g -i .bak test/*
-	sed -E -e s/0\.2\.2/0.2.3/g -i .bak test/unit/*
-	sed -E -e s/0\.2\.2/0.2.3/g -i .bak src/*
-	sed -E -e s/0\.2\.2/0.2.3/g -i .bak etc/*
-	sed -E -e s/0\.2\.2/0.2.3/g -i .bak include/*	
+	sed -E -e s/0\.2\.3/0.2.4/g -i .bak *
+	sed -E -e s/0\.2\.3/0.2.4/g -i .bak test/*
+	sed -E -e s/0\.2\.3/0.2.4/g -i .bak test/unit/*
+	sed -E -e s/0\.2\.3/0.2.4/g -i .bak src/*
+	sed -E -e s/0\.2\.3/0.2.4/g -i .bak etc/*
+	sed -E -e s/0\.2\.3/0.2.4/g -i .bak include/*	
 
 delbak:
 	rm -f *.bak
@@ -110,31 +139,42 @@ clean:
 	cd etc/luajson && $(MAKE) $@
 
 html:
-	lua etc/markdown.lua README.md
-	lua etc/markdown.lua src/README.md
-	lua etc/markdown.lua etc/README.md
-	lua etc/markdown.lua test/README.md
+	lua etc/markdown.lua --style etc/css/style.css --inline-style README.md
+	sed -E -e 's/url\(\.\.\/\.\.\/etc/url(etc/g' -i .bak README.html
+	lua etc/markdown.lua --style etc/css/style.css --inline-style src/README.md
+	sed -E -e 's/url\(\.\.\/\.\.\/etc/url(..\/etc/g' -i .bak src/README.html
+	lua etc/markdown.lua --style etc/css/style.css --inline-style etc/README.md
+	sed -E -e 's/url\(\.\.\/\.\.\/etc/url(..\/etc/g' -i .bak etc/README.html
+	lua etc/markdown.lua --style etc/css/style.css --inline-style test/README.md
+	sed -E -e 's/url\(\.\.\/\.\.\/etc/url(..\/etc/g' -i .bak test/README.html
+
 
 none:
 	@echo "To build Fleece, please do"
-	@echo "   make <PLATFORM>"
+	@echo "	  make <PLATFORM>"
 	@echo "where <PLATFORM> is one of these:"
-	@echo "   $(PLATS)"
+	@echo "	  $(PLATS)"
 	@echo "		e.g. 'make macosx'"
 	@echo "		'macosx-old' is for Mac OS X < 10.4 / PPC, see http://lua-users.org/wiki/BuildingModules"
 	@echo "		ONLY MACOSX and LINUX so far, please contribute your compilation commands. Thank you!"
 	@echo "Other options:"
-	@echo "   $(TPLATS)"
+	@echo "	  $(TPLATS)"
 	@echo "		these make the luajson C lib, which is not part of fleece, for comparison"
 	@echo "		ONLY MACOSX and LINUX so far, please contribute. Thank you!"
-	@echo "   test"
+	@echo "	  test"
 	@echo "		runs minimal test scripts that check the health of the fleece build"
-	@echo "   test2"
+	@echo "	  test2"
 	@echo "		runs some randomly nested test data that demonstrates fleece' output"
-	@echo "   test-test"
+	@echo "   test3"
 	@echo "		runs minimal test scripts that check the health of json4 and the luajson test build"
-	@echo "   bench bench2 bench3 bench4 bench5"
+	@echo "   unit-tests basic-unit-tests complex-unit-tests"
+	@echo "		unit tests: all, only basic, only complex ones (generated and long running)."
+	@echo "   bench bench2 bench3 bench3a bench3b bench4 bench5 bench5a bench5b"
 	@echo "		runs bench mark scripts that compare fleece to json4, luajson, lua-yajl"
+	@echo "   html"
+	@echo "		create .html from .md"
+	@echo "   delbak"
+	@echo "		delete *.bak files"
 	@echo "   clean"
 	@echo "		delete built files"
 

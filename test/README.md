@@ -1,21 +1,19 @@
-<div class=head></div>
-
-**Eonblast Fleece 0.2.3**
+**Eonblast Fleece 0.2.4**
 
 Tests, Benchmarks, Comparison
 -----------------------------
 
 This folder offers benchmarks and supports comparison of Fleece with:
 
-* **JSON4 0.9.50**: aka JSON4Lua, JSON for Lua, module name 'json' http://json.luaforge.net/
-* **LuaJSON 1.1**: aka luajsonlib, LuaJSON C Library http://luaforge.net/projects/luajsonlib/
-* **Lua-Yajl 1.0.9**: with Oct '10  bindings https://github.com/brimworks/lua-yajl/
+* **JSON4 0.9.50**: aka JSON4Lua, JSON for Lua, module name 'json' <http://json.luaforge.net/>
+* **LuaJSON 1.1**: aka luajsonlib, LuaJSON C Library <http://luaforge.net/projects/luajsonlib/>
+* **Lua-Yajl 1.0.9**: with Oct '10  bindings <https://github.com/brimworks/lua-yajl/>
 
 Note that the names of the various Lua-JSON packages can be confusing. They are not unique and therefore 'JSON4' and 'LuaJSON' are chosen here to clarify which packages are meant. They don't always call themselves this way.
 
-JSON4 is native Lua, LuaJSON and Lua-Yajl are C libraries for Lua and thus faster. JSON4 is listed as 'cmjjson' with the comparisons at http://lua-users.org/wiki/JsonModules. 
+JSON4 is native Lua, LuaJSON and Lua-Yajl are C libraries for Lua and thus faster. JSON4 is listed as 'cmjjson' with the comparisons at <http://lua-users.org/wiki/JsonModules>. 
 
-If somebody has the bench code behind the numbers at http://lua-users.org/wiki/JsonModules, please let me know.
+If somebody has the bench code behind the numbers at <http://lua-users.org/wiki/JsonModules>, please let me know.
 
 LuaJSON needed slight modifications for me to compile, see /* hd */ tags int the source. It sometimes crashes for me on one Mac, not sure why. To take the blame from Fleece, try bench3a then. Luajson comes with this package, in etc/luajson and can be made with 'make &lt;PLATFORM>-test'.
  
@@ -87,20 +85,5 @@ will print something like this:
 	---------------------------------------------------------------------------------
 	Note that fleece may list associative arrays in different order.
 	
-
-<pre>
-<style>
-div.head { border: 0; border-top-left-radius: 7px; 
-           border-bottom-right-radius: 15px; 
-           background: url(../etc/images/fleece-footer-1.1.png) no-repeat top right;
-           height:81px; padding: 0; margin: 0; }  
-div.foot { border: 0; border-bottom-left-radius: 15px; 
-           border-bottom-right-radius: 15px; 
-           background: url(../etc/images/fleece-footer-1.1.png) no-repeat bottom left;
-           height:31px; padding: 0; margin: 0; }  
-</style>
-</pre>
 ____________________________________________________________________________
-README fleece/test hd Feb 2011 - powered by Eonblast http://www.eonblast.com
-
-<div class=foot></div>
+README fleece/test hd Mar 2011 - powered by Eonblast <http://www.eonblast.com>

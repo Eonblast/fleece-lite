@@ -2,7 +2,7 @@
 --- Package     : Fleece - fast Lua to JSON module                          ---
 --- File        : test/unit/complex.lua                                     ---
 --- Description : Fleece unit tests: more complex tests                     ---
---- Version     : 0.2.3 / alpha                                             ---
+--- Version     : 0.2.4 / alpha                                             ---
 --- Copyright   : 2011 Henning Diedrich, Eonblast Corporation               ---
 --- Author      : H. Diedrich <hd2010@eonblast.com>                         ---
 --- License     : see file LICENSE                                          ---
