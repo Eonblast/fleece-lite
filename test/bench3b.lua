@@ -34,9 +34,9 @@ print("IF BENCH3 CRASHES, CHECK OUT IF THIS SCRIPT CRASHES, TOO.")
 ELEMENTS = 1000
 CYCLES   = 100
 
-package.path="etc/?.lua"
+package.path="etc/json4/?.lua"
 json4 = require("json")
-package.cpath="etc/?.so"
+package.cpath="etc/luajson/?.so"
 luajson = require("luajson")
 
 -- luajson stuff

@@ -110,9 +110,12 @@ local function measure3(prepP, prepare, prompt1, action1, prompt2, action2, prom
 	printf("     %.20s.. \n", r2)
 	third, r3 = measure(prepP, prepare, prompt3, action3)
 	
-	if(secnd and third) then prc = math.floor(third / secnd * 100) else prc = "-" end
-	printf("%2d%%  %.20s.. \n", prc, r3)
-
+	if(secnd and third) then prc = math.floor(third / secnd * 100) 
+		printf("%2d%%  %.20s.. \n", prc, r3)
+	else 
+		prc = "-" 
+		printf("     %.20s.. \n", r3)
+	end
 end
 
 

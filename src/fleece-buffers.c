@@ -64,26 +64,27 @@ inline void buffer_add(insp_ctrl *ctrl, size_t minlen)
 	// first buffer: re-use if still around
 	if(!last /* means, has no predecessor == is first of parts list */) {
 		size = (minlen > ctrl->lucky_buf ? minlen : ctrl->lucky_buf);
-		if(!lucky) lucky = malloc(sizeof(string_part) + size);
+		if(!lucky) lucky = malloc(sizeof(string_part) + size +1);
 		part = lucky; /* think */
 	}
 	else
 	{
 		size = (minlen > ctrl->parts_buf ? minlen : ctrl->parts_buf);
-    	part = malloc(sizeof(string_part) + size);
+	    	part = malloc(sizeof(string_part) + size +1);
 	}
+	*(((char *)part) + sizeof(string_part) + size + 1) = '$';
 	
 	if(size < 5) { printf("fleece: ** buffer < 5 exit.\n"); exit(196); }
 
 	#if (VERBOSITY >= 6)
-    printf(" fleece @6: new buffer %p, size %zd ", part, size);
-    #endif
+	printf(" fleece @6: new buffer %p, size %zd ", part, size);
+	#endif
 
 	/* buffer init */
-    part->next = (string_part *)0;
-    part->len = 0;
-    part->bufsize = size;
-    part->buf = (char *)0;
+	part->next = (string_part *)0;
+	part->len = 0;
+	part->bufsize = size;
+	part->buf = (char *)0;
 	#ifdef FLEECE_ALWAYS_DELIMIT
 	*(dynp(part)) = 0;
 	#endif
@@ -108,8 +109,8 @@ inline void buffer_add(insp_ctrl *ctrl, size_t minlen)
 	ctrl->total_parts++;
     
 	#if (VERBOSITY >= 5)
-    printf(" total len now: %ld ", ctrl->total_len);
-    #endif
+	printf(" total len now: %ld ", ctrl->total_len);
+	#endif
 }
 
 /* this is pretty new and except for massive scatter shot not fully tested */
@@ -143,8 +144,8 @@ inline char *collapse_parts(string_part **first, size_t total_len, size_t pparts
 	char *all, *p; 
 	p = all = (char *)malloc(total_len+1);
 	char *p_control = all + total_len + 1;
-    string_part *next, *part; part = *first;
-    size_t parts_control = pparts_control;
+	string_part *next, *part; part = *first;
+	size_t parts_control = pparts_control;
     
 	#if (VERBOSITY >= 2)
 	printf("\nfleece @2: collapse into new buffer %p, %zd parts, " \
@@ -199,7 +200,11 @@ inline char *collapse_parts(string_part **first, size_t total_len, size_t pparts
        		#if (VERBOSITY >= 9)
        		printf("free buffer %p\n", part);
        		#endif
-        	free(part); 
+		if(*(((char *)part) + sizeof(string_part) + part->bufsize + 1) != '$') {
+			printf("fleece [0]: ** buffer end tag  overrun (%zd/%zd): '%.*s'", part->len, part->bufsize, (int)part->bufsize +1, ((char *)part) + (sizeof(string_part)));
+			exit(193);
+		 }		
+         	free(part); 
         } else { *(char *)lucky = 0; *(char *)(lucky+1) = 0; }
         part = next;
 	}
@@ -237,7 +242,7 @@ inline void free_collapsed(void *part)
 		#if (VERBOSITY >= 8)
 		printf("free (lucky is %p)\n", lucky); 
 		#endif
-    	free(part); 
+    		free(part); 
    }
    else { 
 		#if (VERBOSITY >= 8)
@@ -264,10 +269,15 @@ inline size_t free_parts(string_part *first)
 		#endif
 		// free, except if the lucky buffer: keep that
         if(part != lucky) {
-			#if (VERBOSITY >= 8)
+			// if (VERBOSITY >= 8)
 			printf("free\n"); 
-			#endif
-        	free(part);
+			// endif
+                	if(*(((char *)(part)) + sizeof(string_part) + part->bufsize + 1) != '$') {
+                        	printf("fleece [0]: ** buffer end tag  overrun (%zd/%zd): '%.*s'", part->len, part->bufsize, (int) part->bufsize +1, ((char *)part) + (sizeof(string_part)));
+                	        exit(193);  
+        	         }
+	                free(part);
+			printf("done");
         }
         else { 
 			#if (VERBOSITY >= 8)

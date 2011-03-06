@@ -36,10 +36,10 @@ fleece = require("fleece")
 -- luajson = require("luajson")
 
 -- luajson stuff
-local base = _G
-json = luajson
-json.null = {_mt = {__tostring = function () return "null" end, __call = function () return "null" end}}
-base.setmetatable(json.null, json.null._mt)
+-- local base = _G
+-- json = luajson
+-- json.null = {_mt = {__tostring = function () return "null" end, __call = function () return "null" end}}
+-- base.setmetatable(json.null, json.null._mt)
 
 sep = "---------------------------------------------------------------------------------"
 

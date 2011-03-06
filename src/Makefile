@@ -46,6 +46,10 @@ linux:
 	gcc -O2 -fomit-frame-pointer -I../include -c -o fleece.o fleece.c
 	gcc -O -shared -fomit-frame-pointer -o fleece.so fleece.o
 
+linux-64:
+	gcc -O2 -fpic -I../include -c -o fleece.o fleece.c
+	gcc -O -shared -fpic -o fleece.so fleece.o
+
 macosx:
 	gcc -bundle -undefined dynamic_lookup -I../include -o fleece.so fleece.c
 

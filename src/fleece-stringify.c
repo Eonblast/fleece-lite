@@ -198,7 +198,7 @@ void stringify_array_part (insp_ctrl *ctrl, const Table *t, size_t *count, int *
 			(*count)++;
 			stringify_value_macro(ctrl, v); 
 			/* this must not go entirely blind but is taken care of here (*) */
-			buffer_add_char_blindly(ctrl, ','); // TODO ... flags, pure arrays ...
+			buffer_add_char_safely(ctrl, ','); // TODO ... flags, pure arrays ...
 		}
     }
     *pure = pu;

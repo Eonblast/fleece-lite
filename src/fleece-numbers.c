@@ -36,7 +36,7 @@ void initmux() {
 	memset(mux0, 0, 4000);
 	char *m = mux0 -4;
 	int i = 0;
-	while(i < 1000)	sprintf(m += 4, "%03D", i++);
+	while(i < 1000)	sprintf(m += 4, "%3.3d", i++);
 
 	mux = malloc(4000);
 	memset(mux, 0, 4000);
@@ -163,10 +163,13 @@ void itoa(int pvalue, char* pstr, size_t *rlen) {
 	
 	ret:;
 	#if SELFCHECK >=3
+	        *(pstr+*rlen) = 0;
 		char test[32];
 		sprintf(test, "%d", pvalue);
-		if(strcmp(test, pstr))
-			printf("fleece [3]: ** fast integer look up conversion error: %d -> '%s'.\n", pvalue, pstr);
+		if(strcmp(test, pstr)) {
+			printf("fleece [3]: ** fast integer look up conversion error: %d made to '%s', should be '%s'.\n", pvalue, pstr,test);
+			exit(194);
+		}
 	#endif
 	return;
 }

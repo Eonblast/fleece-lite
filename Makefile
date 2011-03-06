@@ -36,10 +36,10 @@ PLAT= none
 all: $(PLAT)
 
 # use one of these, e.g. 'make linux'
-PLATS= aix ansi bsd freebsd generic linux macosx macosx-old mingw posix solaris
+PLATS= aix ansi bsd freebsd generic linux linux-64 macosx macosx-old mingw posix solaris
 
 # use one of these to build luajson for comparison
-TPLATS= aix-test ansi-test bsd-test freebsd-test generic-test linux-test macosx-test macosx-old-test mingw-test posix-test solaris-test
+TPLATS= aix-test ansi-test bsd-test freebsd-test generic-test linux-test linux-64-test macosx-test macosx-old-test mingw-test posix-test solaris-test
 
 # branch off to src/Makefile
 $(PLATS):
