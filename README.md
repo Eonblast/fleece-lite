@@ -73,7 +73,7 @@ Lua knows only tables, JSON knows arrays and objects, with sparse arrays possibl
 
 This is the open 'lite' branch, the master is cluttered and not open at this point. Please check the license below. As natural person you can use it without restriction. Same for anything Open Source. 
 
-This License is valid for Fleece Lite. It is not applicable for the master branch, in case we should share it with you and it is not applicable for JSON4 and LuaJSON that are bundled with Fleece Lite for comparison, in etc/.
+This License is valid for Fleece Lite. It is not applicable for the master branch, in case we should share it with you and it is not applicable for JSON4,  LuaJSON, Lua-Yajl, Yajl, lunit or Markdown.lua that are bundled with Fleece Lite for comparison and support, in the etc folder.
 
 ## History
 
@@ -102,18 +102,18 @@ This License is valid for Fleece Lite. It is not applicable for the master branc
 
 ## Credits
 
-Thany you to these contributors to the Lua ecosystem:
+Thanks to these contributors to the Lua ecosystem:
 
-**Nathaniel Musgrove: LuaJSON**  
+**Nathaniel Musgrove: [LuaJSON](http://luaforge.net/projects/luajsonlib/)**  
 Serving as starting point and continuous reference during development
 
-**Craig Mason-Jones: JSON4Lua**  
+**Craig Mason-Jones: [JSON4Lua](http://json.luaforge.net/)**  
 The complentary, easiest and most robust solution around
 
-**Michael Roth: lunit**
+**Michael Roth: [lunit](http://www.nessie.de/mroth/lunit/)**  
 Straight forward Unit Testing
 
-**Niklas Frykholm: Markdown.lua**  
+**Niklas Frykholm: [Markdown.lua](http://www.frykholm.se/files/markdown.lua)**  
 Invaluable preview and doc tool
 
 

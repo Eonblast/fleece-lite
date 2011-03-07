@@ -1,5 +1,24 @@
 #!/usr/bin/env lua
 
+-- Fleece doc hack
+
+head_add = "<div class=head>\n" ..
+		   "	<img class=head src=etc/images/fleece-head-1.2.2.2-letters.png>\n" ..
+		   "</div>\n" ..
+		   "<div class=body>\n" 
+
+foot_add =  "<br />\n" ..
+			"<center>\n" ..
+			"<small style='color:gray'>\n" ..
+			"	&copy; 2011 <a href=http://www.eonblast.com style='color:gray'>\n" ..
+			"	Eonblast Corporation</a>\n" ..
+			"</small>\n" ..
+			"</center>\n" ..
+			"</div>\n" ..
+			"<div class=foot></div>\n"
+
+-- end of hack
+
 --[[
 ADAPTED FROM:
 
@@ -1240,9 +1259,8 @@ local function run_command_line(arg)
 	<link rel="stylesheet" type="text/css" href="STYLESHEET" />
 </head>
 <body>
-<div class=head></div>
-<div class=body>
 ]]
+			header = header .. head_add
 			local title = options.title or s:match("<h1>(.-)</h1>") or s:match("<h2>(.-)</h2>") or 
 				s:match("<h3>(.-)</h3>") or "Untitled"
 			header = header:gsub("TITLE", title)
@@ -1261,14 +1279,8 @@ local function run_command_line(arg)
 			end
 			header = header:gsub("CHARSET", options.charset)
 		end
-		local footer = 
-			"<br />" ..
-			"<center><small style='color:gray'>" ..
-			"&copy; 2011 <a href=http://www.eonblast.com style='color:gray'>" ..
-			"Eonblast Corporation</a></small></center>" ..
-			"</div>" ..
-			"<div class=foot></div>" ..
-			"</body></html>"
+		local footer = foot_add .. "\n</body></html>"
+		
 		if options.footer then
 			local f = io.open(options.footer) or error("Could not open file: " .. options.footer)
 			footer = f:read("*a")

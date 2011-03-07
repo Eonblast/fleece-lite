@@ -4,58 +4,86 @@
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 	<title>Eonblast Fleece 0.2.4 Lite</title>
 	<style type="text/css"><!--
-body 	  { font-family: "Century Gothic", Verdana, Helvetica, Arial, sans-serif; 
-			margin: 0; }
+		body 	  { font-family: "Century Gothic", Verdana, Helvetica, Arial, sans-serif; 
+					margin: 0; 
+					background-color: #fffce0; }
 
-div.body  { padding: 4em 5em 1em 5em; }
+		a 		  { color: #989156; 
+					text-decoration: none; }
+		
+		a:visited { color: orange; }
+		
+		a:hover   { color: gold; }
+		
+		
+		img.head  { margin: 10px 10px 10px 5em; }
 
-a 		  { color: #989156; 
-		    text-decoration: none; }
+		div.body  { padding: 4em 5em 1em 5em;
+				  }
+		
+		div.panel { background-color: white; 
+					border-radius: 2em;
+					-moz-border-radius: 2em;
+					border: 1px solid brown;
+					margin: 2em;
+					padding: 2em;
+				  }
+		
+		pre.code-index,
+		pre.code,
+		pre
+				 { background-color: #e8d090; /* #fff8d2; */
+					border: 1px solid #e0c888; /* #f4eac8; */
+					padding: 1em;
+					border-bottom-left-radius: 1em; 
+					-moz-border-radius-bottomleft: 1em; 
+					border-top-right-radius: 1em; 
+					-moz-border-radius-topright: 1em; 
+				  }
+		
+		pre.codelast-index,
+		pre.codelast
+				 { background-color: #e8d090; /* #fff8d2; */
+					border: 1px solid #e0c888; /* #f4eac8; */
+					padding: 1em;
+					border-bottom-left-radius: 1em; 
+					-moz-border-radius-bottomleft: 1em; 
+					border-bottom-right-radius: 1.2em; 
+					-moz-border-radius-bottomright: 1.2em; 
+				  }
 
-a:visited { color: gold; }
-
-a:hover   { color: orange; }
-
-
-pre.code,
-pre  { background-color: #f0f0f0; 
-	        padding: 1em;
-    	    border-bottom-left-radius: 1em; 
-        	-moz-border-radius-bottomleft: 1em; 
-	        border-top-right-radius: 1em; 
-    	    -moz-border-radius-topright: 1em; 
-          }
-
-pre.codelast  { background-color: #f0f0f0; 
-	        padding: 1em;
-    	    border-bottom-left-radius: 1em; 
-        	-moz-border-radius-bottomleft: 1em; 
-	        border-bottom-right-radius: 1.2em; 
-    	    -moz-border-radius-bottomright: 1.2em; 
-          }
-
-div.head { border: 0;
-           border-top-left-radius: 20px 7px; 
-           -moz-border-radius-topleft: 20px 7px; 
-           border-bottom-right-radius: 	35px 30px; 
-           -moz-border-radius-bottomright: 50px 15px; 
-		   background: url(etc/images/fleece-footer-1.1.png) no-repeat top right;
-           height:81px; padding: 0; margin: 0; 
-         }  
-
-div.foot { border: 0; 
-		   border-top-left-radius: 15px; 
-		   -moz-border-radius-topleft: 15px; 
-           border-bottom-right-radius: 15px; 
-           -moz-border-radius-bottomright: 15px; 
-           background: url(etc/images/fleece-footer-1.1.png) no-repeat bottom left;
-           height:31px; padding: 0; margin: 0; 
-         }  
+		pre.code,
+		pre       { background-color: white;
+					border: 2px solid #f0d8c0; }
+		
+		pre.codelast  
+				  { background-color: #f0e4c4; 
+					border: 2px solid white; }
+		
+		div.head { border: 0;
+				   border-top-left-radius: 20px 7px; 
+				   -moz-border-radius-topleft: 20px 7px; 
+				   border-bottom-right-radius: 	35px 30px; 
+				   -moz-border-radius-bottomright: 50px 15px; 
+				   background: url(etc/images/fleece-head-1.2.2-background.jpg) no-repeat top right;
+				   height:81px; padding: 0; margin: 0; 
+				 }  
+		
+		div.foot { border: 0; 
+				   border-top-left-radius: 15px; 
+				   -moz-border-radius-topleft: 15px; 
+				   border-bottom-right-radius: 15px; 
+				   -moz-border-radius-bottomright: 15px; 
+				   background: url(etc/images/fleece-head-1.2.2-background.jpg) no-repeat bottom left;
+				   height:31px; padding: 0; margin: 0; 
+				 }  
 
 --></style>
 </head>
 <body>
-<div class=head></div>
+<div class=head>
+	<img class=head src=etc/images/fleece-head-1.2.2.2-letters.png>
+</div>
 <div class=body>
 
 <h1>Eonblast Fleece 0.2.4 Lite</h1>
@@ -142,7 +170,7 @@ json_str = fleece.json(t)
 
 <p>This is the open 'lite' branch, the master is cluttered and not open at this point. Please check the license below. As natural person you can use it without restriction. Same for anything Open Source. </p>
 
-<p>This License is valid for Fleece Lite. It is not applicable for the master branch, in case we should share it with you and it is not applicable for JSON4 and LuaJSON that are bundled with Fleece Lite for comparison, in etc/.</p>
+<p>This License is valid for Fleece Lite. It is not applicable for the master branch, in case we should share it with you and it is not applicable for JSON4,  LuaJSON, Lua-Yajl, Yajl, lunit or Markdown.lua that are bundled with Fleece Lite for comparison and support, in the etc folder.</p>
 
 <h2>History</h2>
 
@@ -177,18 +205,18 @@ json_str = fleece.json(t)
 
 <h2>Credits</h2>
 
-<p>Thany you to these contributors to the Lua ecosystem:</p>
+<p>Thanks to these contributors to the Lua ecosystem:</p>
 
-<p><strong>Nathaniel Musgrove: LuaJSON</strong> <br/>
+<p><strong>Nathaniel Musgrove: <a href="http://luaforge.net/projects/luajsonlib/">LuaJSON</a></strong> <br/>
 Serving as starting point and continuous reference during development</p>
 
-<p><strong>Craig Mason-Jones: JSON4Lua</strong> <br/>
+<p><strong>Craig Mason-Jones: <a href="http://json.luaforge.net/">JSON4Lua</a></strong> <br/>
 The complentary, easiest and most robust solution around</p>
 
-<p><strong>Michael Roth: lunit</strong>
+<p><strong>Michael Roth: <a href="http://www.nessie.de/mroth/lunit/">lunit</a></strong> <br/>
 Straight forward Unit Testing</p>
 
-<p><strong>Niklas Frykholm: Markdown.lua</strong> <br/>
+<p><strong>Niklas Frykholm: <a href="http://www.frykholm.se/files/markdown.lua">Markdown.lua</a></strong> <br/>
 Invaluable preview and doc tool</p>
 
 
@@ -219,4 +247,14 @@ OTHER DEALINGS IN THE SOFTWARE.</p>
 <hr/>
 <p>README fleece hd Mar 2011 - powered by Eonblast http://www.eonblast.com</p>
 
-<br /><center><small style='color:gray'>&copy; 2011 <a href=http://www.eonblast.com style='color:gray'>Eonblast Corporation</a></small></center></div><div class=foot></div></body></html>
+<br />
+<center>
+<small style='color:gray'>
+	&copy; 2011 <a href=http://www.eonblast.com style='color:gray'>
+	Eonblast Corporation</a>
+</small>
+</center>
+</div>
+<div class=foot></div>
+
+</body></html>

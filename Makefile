@@ -143,10 +143,15 @@ html:
 	sed -E -e 's/url\(\.\.\/\.\.\/etc/url(etc/g' -i .bak README.html
 	lua etc/markdown.lua --style etc/css/style.css --inline-style src/README.md
 	sed -E -e 's/url\(\.\.\/\.\.\/etc/url(..\/etc/g' -i .bak src/README.html
+	sed -E -e 's/src=etc/src=..\/etc/g' -i .bak src/README.html
 	lua etc/markdown.lua --style etc/css/style.css --inline-style etc/README.md
 	sed -E -e 's/url\(\.\.\/\.\.\/etc/url(..\/etc/g' -i .bak etc/README.html
+	sed -E -e 's/src=etc/src=..\/etc/g' -i .bak etc/README.html
 	lua etc/markdown.lua --style etc/css/style.css --inline-style test/README.md
 	sed -E -e 's/url\(\.\.\/\.\.\/etc/url(..\/etc/g' -i .bak test/README.html
+	sed -E -e 's/src=etc/src=..\/etc/g' -i .bak test/README.html
+	lua etc/markdown.lua --style etc/css/style.css --inline-style LICENSE
+	sed -E -e 's/url\(\.\.\/\.\.\/etc/url(etc/g' -i .bak LICENSE.html
 
 
 none:
