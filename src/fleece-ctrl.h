@@ -2,13 +2,13 @@
 *** Packages    : Fleece - fast Lua to JSON module                          ***
 *** File        : fleece-insp_ctrl.h                                        ***
 *** Description : Lua data traversal and JSON str build control structure   ***
-*** Version     : 0.2.4 / alpha                                             ***
+*** Version     : 0.3.0 / alpha                                             ***
 *** Requirement : self sufficient ANSI C                                    ***
 *** Copyright   : 2011 Henning Diedrich, Eonblast Corporation               ***
 *** Author      : H. Diedrich <hd2010@eonblast.com>                         ***
 *** License     : see file LICENSE                                          ***
 *** Created     :    Feb 2011                                               ***
-*** Changed     :    Feb 2011                                               ***
+*** Changed     : 08 Mar 2011                                               ***
 ***-------------------------------------------------------------------------***
 ***                                                                         ***
 ***  Most of the parameters are not used yet.                               ***
@@ -21,7 +21,14 @@
 #include "fleece-config.h"
 #include "fleece-intern.h"
 
-/* control structure for traversal of data, both stringification and pre-count */
+/*****************************************************************************\
+***                                                                         ***
+***                     TRAVERSION CONTROL STRUCTURE                        ***
+***                                                                         ***
+ ***************************************************************************** 
+ * Control structure for traversal of data, both stringification & pre-count.* 
+ * Most fields are not used yet.                                             */
+
 struct insp_ctrl_struct {
 
 	/* parameters */
@@ -42,6 +49,7 @@ struct insp_ctrl_struct {
 
 	/* (+ctrl-flags+) */	
 	char floatflag;   		/* f: fixed prec, g: brief, e: scient, x: hex bytes, r: raw bytes */
+	int escape_flag;		/* E: E = E3; E0 none; E1 ",\; E2 ",\,/; E3 0-31,127,",\,/ */
 	int write_bool;   		/* b: write 'true' and 'false', else 1 and 0 */
 	int use_sprintf;  		/* s: use sprintf() to make floats */
 	int hasty_float;  		/* h: hasty float count as 32 chars in pre-count */
@@ -65,6 +73,8 @@ struct insp_ctrl_struct {
 
 	/* traversion control */
 	size_t total_len;   	/* running counter of needed byte size */
+	size_t total_esc_bytes; /* running counter of bytes needed for escape sequences */
+	size_t total_esc_chars; /* running counter of characters that need escape sequences */
 	size_t total_parts; 	/* running counter of use parts buffers */
 	size_t had_parts; 	    /* saved counter of use parts buffers */
 	size_t depth;       	/* running counter of table recursion depth vs dead locks */
@@ -95,3 +105,4 @@ struct insp_ctrl_struct {
 typedef struct insp_ctrl_struct insp_ctrl;
 
 #endif
+

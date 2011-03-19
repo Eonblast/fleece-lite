@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-	<title>Eonblast Fleece 0.2.4 Lite</title>
+	<title>Eonblast Fleece 0.3.0 Lite</title>
 	<style type="text/css"><!--
 		body 	  { font-family: "Century Gothic", Verdana, Helvetica, Arial, sans-serif; 
 					margin: 0; 
@@ -32,19 +32,20 @@
 		pre.code-index,
 		pre.code,
 		pre
-				 { background-color: #e8d090; /* #fff8d2; */
-					border: 1px solid #e0c888; /* #f4eac8; */
+				 { background-color: #f4eca8; /* #e2d090; */ /* #fff8d2; */
+					border: 2px solid #fcb000; /* #f4eac8; */
 					padding: 1em;
 					border-bottom-left-radius: 1em; 
 					-moz-border-radius-bottomleft: 1em; 
 					border-top-right-radius: 1em; 
 					-moz-border-radius-topright: 1em; 
+					overflow: hidden; scrollbar: auto;
 				  }
 		
 		pre.codelast-index,
 		pre.codelast
-				 { background-color: #e8d090; /* #fff8d2; */
-					border: 1px solid #e0c888; /* #f4eac8; */
+				 { background-color: #f4eca8;  /* #e2d090; */ /* #fff8d2; */
+					border: 2px solid #fcb000; /* #f4eac8; */
 					padding: 1em;
 					border-bottom-left-radius: 1em; 
 					-moz-border-radius-bottomleft: 1em; 
@@ -86,17 +87,15 @@
 </div>
 <div class=body>
 
-<h1>Eonblast Fleece 0.2.4 Lite</h1>
+<h1>Eonblast Fleece 0.3.0 Lite</h1>
 
 <p><strong>Fast Lua to JSON conversion.</strong></p>
 
 <p>Fleece is optimized for fastest Lua to JSON conversion and beats other JSON packages by around 10 times.  I would be happy if you found that something new became possible with one of your projects thanks to Fleece' speed.</p>
 
-<p>Fleece is produced for Eonblast's Eonbeam game servers to address a performance bottle neck.  Fleece is a one-way affair: Lua to JSON, and it will remain like this for the time being. It should get additional specialized tuning parameters. </p>
+<p>Fleece is produced for Eonblast's Eonbeam game servers to address a performance bottle neck.  Fleece is a one-way affair: Lua to JSON, and it will remain like this for the time being. It will likely acquire additional tuning parameters. </p>
 
-<p>Please send any kind of feedback my way, bugs, docs, source, comments. Thank you! </p>
-
-<p><strong>THIS IS AN ALPHA RELEASE, SOME ESSENTIALS ARE MISSING</strong></p>
+<p>Please send any kind of feedback my way: bugs, docs, source, comments, random thoughts. If you have a platform other than Linux or Mac, please contribute your make instructions (for src/Makefile). Thank you! </p>
 
 <p><strong>Download:</strong></p>
 
@@ -114,7 +113,8 @@
 <p><strong>Testing:</strong></p>
 
 <pre><code>make test
-make unit-tests # long
+make test2
+make check
 </code></pre>
 
 
@@ -133,38 +133,150 @@ make bench3
 json_str = fleece.json(t)
 </code></pre>
 
-<p>Fleece works with Lua 5.1.4 and 5.1.4-2, it can be adapted to other Lua versions or LuaJIT and will be ported to 5.2. Part of its speed advantage over other JSON packages is derived from the fact that it accesses the Lua table data at the core C level, below the Lua C API, which frees a significant number of cycles. It also uses a string buffer that is custom designed for the specific task of building a JSON string. It uses custom programmed, faster float and integer conversion and at the expense of some memory consumtion, it keeps some string and lookup buffers around once initialized, for the next encoding. Performance can be tuned by tweaking buffer sizes at compile time, by setting defines in src/fleece-intern.h. The defaults are set for Fleece to produce standard JSON reasonably fast.</p>
 
+<p><strong>Compatibility</strong></p>
+
+<p>Fleece works with Lua 5.1.4 and 5.1.4-2, it can be adapted to other Lua versions or LuaJIT and will be ported to 5.2. </p>
+
+<p><strong>Performance</strong></p>
+
+<p>Part of Fleece' speed advantage over other JSON packages is derived from the fact that it accesses the Lua table data at the core C level, below the Lua C API, which frees a significant number of cycles. It also uses string buffers that are custom designed for the specific task of building a JSON string. It can employ custom programmed, faster float and integer conversion. And at the expense of some memory consumtion, it keeps one string buffer and two lookup tables around once initialized, for the next encoding. </p>
+
+<p>If you need proper JSON character escaping and are on a x86 platform, Fleece can power up inline assembler to make the string escaping sufficiently fast. If you have your strings in check and can free Fleece from taking care of the escaping, the C string routines are just as fast as the inline assembler. See 'Escape Flags', below.</p>
+
+<p>Performance can be tuned by tweaking buffer sizes at compile time, i.e. setting defines in src/fleece-intern.h. The expectation is that there will be more parameters in the future that will allow to control the performance and trade offs directly. The defaults out of the box are set for Fleece to produce standard JSON as fast as possible. </p>
+
+<p>Performance can be checked using 'make bench', interesting are bench2, bench3 and bench7.</p>
 
 <h2>Functions</h2>
 
-<p><strong>fleece.json()</strong> - convert (stringify) a Lua value to a JSON string <br/>
-<strong>fleece.size()</strong> - dry run to find the JSON result size, without creating it  </p>
+<p>Fleece currently exposes one function:</p>
 
+<p><strong>fleece.json()</strong> - convert (stringify) a Lua value to a JSON string  </p>
 
-<h2>Road Map</h2>
+<h2>Sample</h2>
 
-<p>Could look like this:</p>
+<pre><code>require("fleece")    
+str = fleece.json({"Hello", 2, "Json"})
+print(str)
+--&gt; ["Hello", 2, "Json"]
+</code></pre>
 
-<p>0.3.1  </p>
+<h2>json() Parameters</h2>
+
+<h4>1: Lua Data</h4>
+
+<p>The first parameter to fleece.json() is the Lua data, often a table, that should be converted into a JSON string.</p>
+
+<h4>2: Escape Flags</h4>
+
+<p>The second parameter is optional, it allows you to control how the JSON string  should be constructed in the event that ASCII control characters are encountered in Lua strings in the input. </p>
+
+<pre><code>print(fleece.json("he\\o!"))        --&gt; "he\o!"
+print(fleece.json("he\\o!", "E1))   --&gt; "he*o!"
+print(fleece.json("he//o!", "E3"))  --&gt; "he\/\/o!"  
+</code></pre>
+
+<p>JSON regards as control characters ASCII <strong>0 - 31</strong> and <strong>127</strong>, it excpects <strong>"</strong> and <strong>\</strong> escaped and allows to escape <strong>/</strong> to avoid <code>&lt;/</code>, which can pose problems in HTML strings. Escaping means prepending a <strong>\</strong> or using the <strong>\uNNNN</strong> notation.</p>
+
+<p>To comply with the JSON standard, all those characters should be escaped. That comes with a performance penalty. So if you have good control over your data and know it can't contain funky chars, you want to leave escaping switched off. That is the default and equivalent to using <strong>E0</strong>. You can check out the panelty on your machine by using 'make bench7a'.</p>
+
+<p>There is no panelty, with any of the flags, if you encode only numbers, bools and tables. So if an overwhelming majority of your data consists of numbers, you could just as well play it very safe and use <strong>E4</strong> and be covered for any eventuality. But, e.g., if you are using string keys and are certain that they don't contain any control characters, and not <strong>"</strong> or <strong>\</strong>, you should remain with the default, i.e. use <strong>E0</strong> or set no E-flag, to get maximal performance.</p>
+
+<p>The second fastest option is to 'purge' the worst two characters, <strong>"</strong> and <strong>\</strong>. This is what <strong>E1</strong> does. They are the worst, because they can break the JSON string, cut it in two and make the resulting JSON output having an invalid format. Obviously, a not escaped, stray <strong>"</strong> as 'part of a string' will do exactly that. The flag <strong>E1</strong> makes sure that they are replaced by a <strong>*</strong>. You will be able to change the purge character by changing FLEECE_PURGE_CHAR in src/fleece-config.h in a later version of Fleece. This is a crude solution, but it gives safety for a penalty of about 25-50%, depending on how many escaped characters are encountered. The more, the slower. And if you are using assembler, the penalty will be absolutely and relatively lower, of 10-15%.</p>
+
+<p>To escape only <strong>"</strong> and <strong>\</strong>, i.e. turning them into <strong>\"</strong> and <strong>\\</strong> respectively, costs more time. It's the flag <strong>E2</strong> that triggers the conversion and the penalty can be 50-100%; again less when using assembler. So this means that it can take up to double the time to create the resulting JSON string as when using <strong>E0</strong>. And the more control characters are encountered, the slower the encoding. </p>
+
+<p>The <strong>E3</strong> flag includes a third character, <strong>/</strong> into this special treatment, which is converted to <strong>\/</strong>, to make sure that HTML is not violated. This can add another 20% slow down in cases with very high frequency of control characters. Again, use bench7a to check it out.</p>
+
+<p>Finally, <strong>E4</strong>, or simply <strong>E</strong>, converts all characters, following the standard, especially the control characters &lt;= 31, as prescribed in the JSON spec. Most characters from 0 through 31, and 127, are translated into a Unicode hex notation of <strong>\uNNNN</strong>. E.g. \u000b for control character #11. But 8, 9, 10, 12, 13 are made into <strong>\f</strong>, <strong>\b</strong>, <strong>\r</strong>, <strong>\t</strong>, <strong>\n</strong> respectively. <strong>"</strong>, <strong>\</strong> and <strong>/</strong> are escaped to <strong>\"</strong>, <strong>\\</strong>, <strong>\/</strong>, just as <strong>E3</strong> does. This is the slowest variant. It can make things 80-250% percent slower, the worse, the more control characters need to be escaped. If they are few and far between, there is not much difference between the time that E1, E2, E3 and E4 take, and that is going to be around 50% over the time of E0, i.e. no escaping. This means, e.g. instead of 300ns per element, 500ns might be needed, on average, for strings. As mentioned before, numbers, booleans and tables per se  will not slow things down; only strings.</p>
+
+<p>Especially for escaping, you will benefit from using one of the -asm build variants, if you can. Loss of speed will be much lower, in both absolute and relative terms. It will be only 10-20%. E.g.: 80ns/element for E0, and 90ns/element for E4.</p>
 
 <ul>
-    <li>Official JSON compatibility, escapes etc.  </li>
-    <li><strong>fleece.warp()</strong> - convert (stringify) a Lua value to a JSON string,  fastest.  </li>
-    <li><strong>fleece.pack()</strong> - convert (stringify) a Lua value to a JSON string, smallest.  </li>
+    <li><strong>E:</strong> same as E4: escape all, according to JSON standarrd.</li>
+    <li><strong>E0:</strong> no escaping, the default. Way fastest but can produce invalid JSON.</li>
+    <li><strong>E1:</strong> replacement of " and \ with *.</li>
+    <li><strong>E2:</strong> escaping " and \ to \" and \.</li>
+    <li><strong>E3:</strong> escaping ",\,/ to \", \ and \/.</li>
+    <li><strong>E4:</strong> escaping 0-31, 127, ", \ and /. 0 -> \u0000 etc. 8 -> \b etc.</li>
 </ul>
 
-<p>0.3.2  </p>
+<h4>Benchmarking</h4>
+
+<p>You can check the effects the escape flags have on performance by using</p>
+
+<pre><code>make bench7a # Fleece only
+make bench7  # Fleece vs JSON4, LuaJSON
+</code></pre>
+
+<p>For the latter you'll see something like this:</p>
+
+<pre><code>  Frequency of escape characters 1 in 100
+  ---------------------------------------------------------------------------------
+  1000 elements in t[i]=randstr(i)          
+  100x luajson.stringify(t)         767ns/element              ["wnj","ukhclqiy","zfbvknygrw","yrpidgqb","vrlkqjjox","iwsj".. 
+  100x json4.encode(t)             3873ns/element              ["wnj","ukhclqiy","zfbvknygrw","yrpidgqb","vrlkqjjox","iwsj".. 
+  100x fleece.json(t, "E0")          80ns/element  10%,   2%   ["wnj","ukhclqiy","zfbvknygrw","yrpidgqb","vrlkqjjox","iwsj".. 
+  100x fleece.json(t, "E1")         128ns/element  16%,   3%   ["wnj","ukhclqiy","zfbvknygrw","yrpidgqb","vrlkqjjox","iwsj".. 
+  100x fleece.json(t, "E2")         127ns/element  16%,   3%   ["wnj","ukhclqiy","zfbvknygrw","yrpidgqb","vrlkqjjox","iwsj".. 
+  100x fleece.json(t, "E3")         126ns/element  16%,   3%   ["wnj","ukhclqiy","zfbvknygrw","yrpidgqb","vrlkqjjox","iwsj".. 
+  100x fleece.json(t, "E4")         134ns/element  17%,   3%   ["wnj","ukhclqiy","zfbvknygrw","yrpidgqb","vrlkqjjox","iwsj".. 
+  ---------------------------------------------------------------------------------
+  1000 elements in t[randstr(i)]=randstr(i) 
+  100x luajson.stringify(t)        1288ns/element              {"wjj":"ygdwzvvcsx","nhfo":"puaefl","oo\u0001y":"k","svjbhuz.. 
+  100x json4.encode(t)             5040ns/element              {"wjj":"ygdwzvvcsx","nhfo":"puaefl","ooy":"k","svjbhuzc":"z.. 
+  100x fleece.json(t, "E0")         146ns/element  11%, 2.8%   {"tjt":"ixxv","jt":" nw","cafioibhh":"np","gmw":"prgksqle",".. 
+  100x fleece.json(t, "E1")         245ns/element  19%,   4%   {"tjt":"ixxv","jt":" nw","cafioibhh":"np","gmw":"prgksqle",".. 
+  100x fleece.json(t, "E2")         235ns/element  18%,   4%   {"tjt":"ixxv","jt":" nw","cafioibhh":"np","gmw":"prgksqle",".. 
+  100x fleece.json(t, "E3")         237ns/element  18%,   4%   {"tjt":"ixxv","jt":" nw","cafioibhh":"np","gmw":"prgksqle",".. 
+  100x fleece.json(t, "E4")         256ns/element  19%,   5%   {"tjt":"ixxv","jt":"\tnw","cafioibhh":"np","gmw":"prgksqle",.. 
+</code></pre>
+
+
+<p>But if you used an assembler build target, it might look like this:</p>
+
+<pre><code>  Frequency of escape characters 1 in 100
+  ---------------------------------------------------------------------------------
+  1000 elements in t[i]=randstr(i)          
+  100x luajson.stringify(t)         758ns/element              ["ei","beir","mwwxnl","uh","ufjaexlizf","slmxda","k","vwtm",.. 
+  100x json4.encode(t)             3857ns/element              ["ei","beir","mwwxnl","uh","ufjaexlizf","slmxda","k","vwtm",.. 
+  100x fleece.json(t, "E0")          80ns/element  10%,   2%   ["ei","beir","mwwxnl","uh","ufjaexlizf","slmxda","k","vwtm",.. 
+  100x fleece.json(t, "E1")          89ns/element  11%, 2.3%   ["ei","beir","mwwxnl","uh","ufjaexlizf","slmxda","k","vwtm",.. 
+  100x fleece.json(t, "E2")          90ns/element  11%, 2.3%   ["ei","beir","mwwxnl","uh","ufjaexlizf","slmxda","k","vwtm",.. 
+  100x fleece.json(t, "E3")          91ns/element  11%, 2.3%   ["ei","beir","mwwxnl","uh","ufjaexlizf","slmxda","k","vwtm",.. 
+  100x fleece.json(t, "E4")          92ns/element  12%, 2.3%   ["ei","beir","mwwxnl","uh","ufjaexlizf","slmxda","k","vwtm",.. 
+  ---------------------------------------------------------------------------------
+  1000 elements in t[randstr(i)]=randstr(i) 
+  100x luajson.stringify(t)        1219ns/element              {"ctvogwgix":"cqqjafab","ckg":"pjegxgdwj","vudnegkfjp":"cgyg.. 
+  100x json4.encode(t)             4778ns/element              {"ctvogwgix":"cqqjafab","ckg":"pjegxgdwj","vudnegkfjp":"cgyg.. 
+  se","".. ce.json(t, "E0")         141ns/element  11%, 2.9%   {"ric":"vyzcvnx","tdaay":"kxzcbcbugz","kqsooc":"gfdxj
+  se","*.. ce.json(t, "E1")         159ns/element  13%,   3%   {"ric":"vyzcvnx","tdaay":"kxzcbcbugz","kqsooc":"gfdxj
+  se","\.. ce.json(t, "E2")         161ns/element  13%,   3%   {"ric":"vyzcvnx","tdaay":"kxzcbcbugz","kqsooc":"gfdxj
+  se","\.. ce.json(t, "E3")         158ns/element  12%,   3%   {"ric":"vyzcvnx","tdaay":"kxzcbcbugz","kqsooc":"gfdxj
+  100x fleece.json(t, "E4")         161ns/element  13%,   3%   {"ric":"vyzcvnx","tdaay":"kxzcbcbugz","kqsooc":"gfdxj\rse",".. 
+</code></pre>
+
+<p>Note that the left side is mangled due to non-escaped control characters being dumped on the screen. Which is expected behavior for E0 - E3.</p>
+
+<h4>json(): Return Value</h4>
+
+<p>The JSON string.</p>
+
+
+<h2>Contribution</h2>
+
+<h4>Platform Build Instructions</h4>
+<p>Please contribute your platform's build instructions for src/Makefile.</p>
+
+<h4>Crash Testing</h4>
+<p>Please try to crash Fleece using  </p>
 
 <ul>
-    <li><strong>fleece.time()</strong> - dry run to find a cpu time estimate for a conversion  </li>
-    <li><strong>fleece.buff()</strong> - dry run to find the memory needed, without allocating it  </li>
+    <li>make complex-unit-test  </li>
+    <li>make bench5  </li>
+    <li>make test-5m  </li>
 </ul>
-
-
-<h4>Objects and Arrays</h4>
-
-<p>Lua knows only tables, JSON knows arrays and objects, with sparse arrays possible using 'null'. Those JSON objects and arrays are produced from one and the same Lua table type and for any conversion, a decision must be found to weigh output size, speed and memory usage. </p>
 
 <h2>Branches</h2>
 
@@ -173,6 +285,27 @@ json_str = fleece.json(t)
 <p>This License is valid for Fleece Lite. It is not applicable for the master branch, in case we should share it with you and it is not applicable for JSON4,  LuaJSON, Lua-Yajl, Yajl, lunit or Markdown.lua that are bundled with Fleece Lite for comparison and support, in the etc folder.</p>
 
 <h2>History</h2>
+
+<p><strong>0.3.0 lite</strong> - 19 Mar 2011 - hd  </p>
+
+<ul>
+    <li>optimized C count, escape and copy code</li>
+    <li>optimized x86 assembler escape and copy code</li>
+    <li>make options and flag for using assembler or c copy code</li>
+    <li>flag for using strcpy for memcpy</li>
+    <li>make file, and make doc extension for bench and test options</li>
+    <li>source re-organization and awk clean up script</li>
+    <li>additional benchmark and unit test scripts</li>
+    <li>enhanced docs</li>
+</ul>
+
+<p><strong>0.2.5 lite</strong> - 09 Mar 2011 - hd  </p>
+
+<ul>
+    <li>escape characters 0-31, 127, " \ /</li>
+    <li>escape flags E, E0, E1, E2, E3, E4 in function call</li>
+    <li>escape unit tests (make escape-unit-test) and benchmarks (make bench7)</li>
+</ul>
 
 <p><strong>0.2.4 lite</strong> - 06 Mar 2011 - hd  </p>
 

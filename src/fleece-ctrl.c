@@ -2,18 +2,24 @@
 *** Packages    : Fleece - fast Lua to JSON module                          ***
 *** File        : fleece-insp_ctrl.c                                        ***
 *** Description : Lua data traversal & JSON string build control structure  ***
-*** Version     : 0.2.4 / alpha                                             ***
+*** Version     : 0.3.0 / alpha                                             ***
 *** Requirement : self sufficient ANSI C                                    ***
 *** Copyright   : (c) 2011 Eonblast Corporation                             ***
 *** Author      : H. Diedrich <hd2010@eonblast.com>                         ***
 *** License     : see file LICENSE                                          ***
 *** Created     :    Feb 2011                                               ***
-*** Changed     :    Feb 2011                                               ***
+*** Changed     : 19 Mar 2011                                               ***
 ***-------------------------------------------------------------------------***
 ***                                                                         ***
 ***  Most of the parameters are not used yet.                               ***
 ***                                                                         ***
 ***-------------------------------------------------------------------------**/
+
+/*****************************************************************************\
+***                                                                         ***
+***                             HELPER MACROS                               ***
+***                                                                         ***
+\*****************************************************************************/
 
 /* returns 1 when true-flag is found, 0 when false-flag, else default value  */
 #define PARSE_FLAG(_feed, _t, _f, _def) \
@@ -33,15 +39,21 @@
 	 		FLEECE_WRONG_KEY_DISALLOW, "K/disallow", \
 	 		"?")
 
-/* create a inspection traversal control structure */
-insp_ctrl *insp_ctrl_set(insp_ctrl *ctrl, const TValue *subj, char *flags, int precision, char **repr, int primary, 
-		int secondary, size_t max_depth, size_t max_waste, size_t lucky_buf, 
-		size_t parts_buf, size_t max_buf, size_t max_holes)
-{
-	//insp_ctrl *ctrl = malloc(sizeof(insp_ctrl));
+/*****************************************************************************\
+***                                                                         ***
+***                             'CONSTRUCTOR'                               ***
+***                                                                         ***
+ ***************************************************************************** 
+ *             create an inspection traversal control structure              *
 
+ *                    MOST PARAMETERS ARE NOT USED YET                       */
+
+insp_ctrl *insp_ctrl_set(insp_ctrl *ctrl, const TValue *subj, char *flags, int precision, 
+	char **repr, int primary, int secondary, size_t max_depth, size_t max_waste, size_t lucky_buf, 
+	size_t parts_buf, size_t max_buf, size_t max_holes)
+{
 	/* ------------------------------------------------------------- */
-	/* parameters and defaults */
+	/* parameters and defaults                                       */
 	/* ------------------------------------------------------------- */
 
 	/* subject data (the table usually) */
@@ -102,6 +114,25 @@ insp_ctrl *insp_ctrl_set(insp_ctrl *ctrl, const TValue *subj, char *flags, int p
 		strchr(flags, 'w') ? 'w' :
 		strchr(flags, 'x') ? 'x' :
 		FLEECE_DEFAULT_FLOAT_FLAG;	 
+	 
+	/** escape flags, which special characters to escape: 
+	 * E = E4 
+	 * E0 none (fastest)
+	 * E1 purge make " and \ to * 
+	 * E2 ",\ 
+	 * E3 ",\,/
+	 * E4 0-31,127,",\,/
+	 */
+	 ctrl->escape_flag    =
+		! flags ?
+		FLEECE_DEFAULT_ESCAPE_FLAG:
+		strstr(flags, "E0") ? 0 :
+		strstr(flags, "E1") ? 1 :
+		strstr(flags, "E2") ? 2 :
+		strstr(flags, "E3") ? 3 :
+		strstr(flags, "E4") ? 4 :
+		strstr(flags, "E")  ? 4 :
+		FLEECE_DEFAULT_ESCAPE_FLAG;	 
 	 
 	/** h: use null to represent holes in arrays 
 	 *  H: disallow holes 
@@ -257,6 +288,8 @@ insp_ctrl *insp_ctrl_set(insp_ctrl *ctrl, const TValue *subj, char *flags, int p
 
 	/* traversion control */
 	ctrl->total_len   = 0; /* running counter of needed byte size */
+	ctrl->total_esc_bytes = 0; /* running counter of bytes needed for escape sequences */
+	ctrl->total_esc_chars = 0; /* running counter of characters that need escape sequences */
 	ctrl->total_parts = 0; /* running counter of use parts buffers */
 	ctrl->had_parts   = 0; /* saved counter of use parts buffers */
 	ctrl->depth       = 0; /* running counter of table recursion depth vs dead locks */
@@ -302,9 +335,13 @@ void insp_ctrl_close(insp_ctrl *ctrl)
 	free_parts(ctrl->parts_list_first); // 0 ok.
 }
 
-/**
- * dump the contents of the control structure
- */
+/*****************************************************************************\
+***                                                                         ***
+***                                   DUMP                                  ***
+***                                                                         ***
+ *****************************************************************************
+\* dump the contents of the control structure, mostly for debugging          */
+
 void dump_ctrl(insp_ctrl *ctrl)
 {
 	puts("-------------------------------------\n");
@@ -393,7 +430,7 @@ void dump_ctrl(insp_ctrl *ctrl)
 		ctrl->max_waste, FLEECE_DEFAULT_MAX_WASTE, (ctrl->max_waste==FLEECE_DEFAULT_MAX_WASTE?"":"*"));
 
 	printf("func_str    : %s (%s) %s (string to use to represent function pointers)\n", ctrl->func_str,
-		FLEECE_DEFAULT_FUNC_STRING, (ctrl->func_str==FLEECE_DEFAULT_FUNC_STRING?"":"*"));
+		FLEECE_DEFAULT_FUNC_STRING, (strcmp(ctrl->func_str,FLEECE_DEFAULT_FUNC_STRING)?"*":""));
 
 	/* init helper */
 	printf("hasty_int_size    : %d (calculated at compile time)\n", ctrl->hasty_int_size);
@@ -419,3 +456,4 @@ void dump_ctrl(insp_ctrl *ctrl)
 
 	puts("-------------------------------------\n");
 }
+

@@ -2,7 +2,7 @@
 --- Package     : Fleece - fast Lua to JSON module                          ---
 --- File        : test/bench3.lua                                           ---
 --- Description : Fleece vs JSON4 and luajson: random tables, speedcked     ---
---- Version     : 0.2.4 / alpha                                             ---
+--- Version     : 0.3.0 / alpha                                             ---
 --- Copyright   : 2011 Henning Diedrich, Eonblast Corporation               ---
 --- Author      : H. Diedrich <hd2010@eonblast.com>                         ---
 --- License     : see file LICENSE                                          ---
@@ -30,7 +30,7 @@ print("A couple of random tables are created and speed is clocked.")
 print("You should have built fleece first with 'make <PLATFORM>', ")
 print("and also built luajson.so with 'make <PLATFORM>-test,")
 print("and now be in the fleece root directory.")
-print("LUAJSON (NOT FLEECE) CAN CRASH THIS TEST. SEE BENCH3a & BENCH3b.")
+print("IF THIS TEST CRASHES, TRY BENCH3a & BENCH3b TO SEE WHO DOES.")
 
 ELEMENTS = 1000
 CYCLES   = 100
@@ -81,6 +81,16 @@ function randstr(i)
 
       return table.concat(r)
  end
+ 
+ 
+function prcstr(part, base)
+    if base == 0 or base == nil or part == nil then return 0 end
+    x = math.floor(part / base * 100)
+    if(x <= 2) then
+        x = math.floor(part / base * 1000) / 10
+    end
+    return x
+end
 
 local t = {}
 local function measure(prepP, prepare, actionP, action, printPrepP)
@@ -110,13 +120,13 @@ local function measure(prepP, prepare, actionP, action, printPrepP)
   	 printf("%10.0fns/element ", mspc)
   else
 	  mspc = nil
-	  printf("%dx %-12s sample too small, could not measure ", cycles, actionP)
+	  printf("%dx %-12s ** sample too small, could not measure, use bench3-1k ** ", cycles, actionP)
   end
   
   return mspc, last 
 end
 if(_PATCH) then io.write(_PATCH) else io.write(_VERSION .. ' official') end
-print(" - Fleece 0.2.4")
+print(" - Fleece 0.3.0")
 
 
 local function measure3(prepP, prepare, prompt1, action1, prompt2, action2, prompt3, action3)
@@ -124,15 +134,15 @@ local function measure3(prepP, prepare, prompt1, action1, prompt2, action2, prom
   print(sep)
 
 	first, r1 = measure(prepP, prepare, prompt1, action1, true)
-	printf("          %.20s.. \n", r1)
+	printf("            %.20s.. \n", r1)
 	secnd, r2 = measure(prepP, prepare, prompt2, action2)
-	printf("          %.20s.. \n", r2)
+	printf("            %.20s.. \n", r2)
 	third, r3 = measure(prepP, prepare, prompt3, action3)
 	
-	if(first and third) then prc = math.floor(third / first * 100) else prc = 0 end
-	printf("%2d%%, ", prc)
-	if(secnd and third) then prc = math.floor(third / secnd * 100) else prc = 0 end
-	printf("%2d%%  %.20s.. \n", prc, r3)
+	prc = prcstr(third, first)
+	printf("%3g%%, ", prc)
+	prc = prcstr(third, secnd)
+	printf("%3g%%  %.20s.. \n", prc, r3)
 
 end
 

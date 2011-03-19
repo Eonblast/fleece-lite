@@ -2,7 +2,7 @@
 --- Package     : Fleece - fast Lua to JSON module                          ---
 --- File        : test/bench5b.lua                                          ---
 --- Description : test JSON4: random tables are converted, time clocked     ---
---- Version     : 0.2.4 / alpha                                             ---
+--- Version     : 0.3.0 / alpha                                             ---
 --- Copyright   : 2011 Henning Diedrich, Eonblast Corporation               ---
 --- Author      : H. Diedrich <hd2010@eonblast.com>                         ---
 --- License     : see file LICENSE                                          ---
@@ -19,18 +19,22 @@
 ---  with 'out of memory', which is ok for now.                             ---
 ---                                                                         ---
 ---  This file tests JSON4 (not Fleece) http://json.luaforge.net/           ---
+---  LuaJSON 1.1: (aka luajsonlib) http://luaforge.net/projects/luajsonlib/ ---
 ---                                                                         ---
 ---  Use: lua test/bench5b.lua                                              ---
+---  Or:  make bench5b                                                      ---
 ---                                                                         ---
 -------------------------------------------------------------------------------
 
 print("Fleece Benchmarks - JSON4 Long Running Crash Test")
 print("=========================================================")
 print("A couple of random tables are created and speed is clocked.")
-print("THIS TEST TAKES VERY LONG. THIS TESTS ONLY JSON4, NOT FLEECE.");
+print("THIS TEST TAKES VERY LONG. ONLY JSON4 AND LUAJSON, NOT FLEECE.");
 
 package.path="etc/json4/?.lua"
 local luajson = require("json")
+package.cpath="etc/luajson/?.so"
+luajson = require("luajson")
 
 -- luajson stuff
 local base = _G
@@ -112,7 +116,7 @@ local function measure(prepP, prepare, actionP, action, printPrepP)
   return mspc, last 
 end
 if(_PATCH) then io.write(_PATCH) else io.write(_VERSION .. ' official') end
-print(" - Fleece 0.2.4")
+print(" - Fleece 0.3.0")
 
 
 local function measure3(prepP, prepare, prompt1, action1, prompt2, action2, prompt3, action3)

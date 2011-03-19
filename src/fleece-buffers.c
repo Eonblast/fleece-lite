@@ -2,7 +2,7 @@
 *** Packages    : Fleece - fast Lua to JSON conversion                      ***
 *** File        : fleece-buffers.c                                          ***
 *** Description : custom string buffer for fast JSON string compilation     ***
-*** Version     : 0.2.4 / alpha                                             ***
+*** Version     : 0.3.0 / alpha                                             ***
 *** Requirement : self sufficient ANSI C                                    ***
 *** Copyright   : 2011 Henning Diedrich, Eonblast Corporation               ***
 *** Author      : H. Diedrich <hd2010@eonblast.com>                         ***
@@ -29,8 +29,14 @@
 #include "fleece-config.h"
 #include "fleece-buffers.h"
 
+/*---------------------------------------------------------------------------*\
+**  Global Pointer to the first ("lucky") string holder buffer               **
+\*---------------------------------------------------------------------------*/
 string_part *lucky = 0;
 	
+/*---------------------------------------------------------------------------*\
+**  Initializing the first of buffers                                        **
+\*---------------------------------------------------------------------------*/
 inline void first_part(insp_ctrl *ctrl)
 {
 	ctrl->parts_list_first = 0;
@@ -43,7 +49,9 @@ inline void first_part(insp_ctrl *ctrl)
 	ctrl->parts_list_first = ctrl->parts_list_last;	
 }
 
-/* make a new dedicated buffer */
+/*---------------------------------------------------------------------------*\
+**  Add a new string holder buffer to the list of buffers                    **
+\*---------------------------------------------------------------------------*/
 inline void buffer_add(insp_ctrl *ctrl, size_t minlen)
 {
 
@@ -113,7 +121,15 @@ inline void buffer_add(insp_ctrl *ctrl, size_t minlen)
 	#endif
 }
 
-/* this is pretty new and except for massive scatter shot not fully tested */
+/*---------------------------------------------------------------------------*\
+** Rewind and discard all string buffers back to a given point               **
+\*---------------------------------------------------------------------------*/
+/* This is used for that case that on the way it is discovered that a table  *
+ * cannot be converted into a JSON array but must be a JSON object. In that  *
+ * case, the entire encoding of the table is discarded, possibly across      *
+ * buffers. None, one or many buffers may get discarded in the process.      *
+ * TODO: except for massive scatter shot not tested by dedicated tests       * 
+\*---------------------------------------------------------------------------*/
 inline void buffer_rewind(insp_ctrl *ctrl, insp_ctrl *store, size_t start_len)
 {
 	string_part *start_part = store->parts_list_last;
@@ -138,6 +154,12 @@ inline void buffer_rewind(insp_ctrl *ctrl, insp_ctrl *store, size_t start_len)
 	if(start_part != ctrl->parts_list_last) { printf("Buffer rewind fails with bad last pointer re-instation %p != %p", start_part, ctrl->parts_list_last); exit(28); }
 }
 
+/*---------------------------------------------------------------------------*\
+** Final wrap up, copying all buffers into one.                              **
+\*---------------------------------------------------------------------------*/
+/* In case that there is only one buffer in use, this function is not even   *
+ * called, but instead that buffer is used as result. See fleece_stringify().*
+\*---------------------------------------------------------------------------*/
 inline char *collapse_parts(string_part **first, size_t total_len, size_t pparts_control)
 {
 	
@@ -191,10 +213,15 @@ inline char *collapse_parts(string_part **first, size_t total_len, size_t pparts
         else printf("fleece @5: collapse dyn part #%d: %p \"%s\", len: %zd, buf size: %zd. Next: %p\n", count, part, (char *)(part + 1), part->len, part->bufsize, part->next);
 		#endif
 
-        if(part->buf) { MEMCPY(p, part->buf, part->len); }
-        else { MEMCPY(p, (char *)(part + 1), part->len); }
+        // TODO: put 0 and use strcpy
+        // note: changed to memcpy from MEMCPY 03/18
+        // this is a special place that will deal with larger swathes than
+        // most other *cpy places.
+        if(part->buf) { memcpy(p, part->buf, part->len); } 
+        else { memcpy(p, (char *)(part + 1), part->len); }
         p += part->len;
 		next = part->next;
+		
 		// free, except if the lucky buffer: keep that
         if(part != lucky) { 
        		#if (VERBOSITY >= 9)
@@ -231,7 +258,9 @@ inline char *collapse_parts(string_part **first, size_t total_len, size_t pparts
 	return all;		
 }
 
-
+/*---------------------------------------------------------------------------*\
+ ** Free the obsolete string buffers                                        **
+\*---------------------------------------------------------------------------*/
 inline void free_collapsed(void *part)
 {
 	#if (VERBOSITY >= 8)
@@ -254,8 +283,10 @@ inline void free_collapsed(void *part)
    }
 }
 
-
-/* collapse does that on its own */
+/*---------------------------------------------------------------------------*\
+ ** Free one obsolete string buffers                                        **
+\*---------------------------------------------------------------------------*/
+/* collapse() does that on its own                                           */
 inline size_t free_parts(string_part *first)
 {
 	#if (VERBOSITY >= 8)
@@ -275,7 +306,8 @@ inline size_t free_parts(string_part *first)
 			#endif
 			/* check post-end tag alive */
            	if(*(((char *)(part)) + sizeof(string_part) + part->bufsize + 1) != '$') {
-               	printf("fleece [0]: ** buffer end tag  overrun (%zd/%zd): '%.*s'", part->len, part->bufsize, (int) part->bufsize +1, ((char *)part) + (sizeof(string_part)));
+               	printf("fleece [0]: ** buffer end tag overrun (%zd/%zd): '%.*s'", part->len,
+               		part->bufsize, (int) part->bufsize +1, ((char *)part) + (sizeof(string_part)));
        	        exit(192);  
    	         }
             free(part);
@@ -292,3 +324,4 @@ inline size_t free_parts(string_part *first)
 	}
 	return count;		
 }
+

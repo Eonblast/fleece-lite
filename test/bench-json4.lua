@@ -2,7 +2,7 @@
 --- Package     : Fleece - fast Lua to JSON module                          ---
 --- File        : test/bench-json4.lua                                      ---
 --- Description : JSON4 test: random tables, clocked                        ---
---- Version     : 0.2.4 / alpha                                             ---
+--- Version     : 0.3.0 / alpha                                             ---
 --- Copyright   : 2011 Henning Diedrich, Eonblast Corporation               ---
 --- Author      : H. Diedrich <hd2010@eonblast.com>                         ---
 --- License     : see file LICENSE                                          ---
@@ -97,7 +97,7 @@ local function measure(prepP, prepare, actionP, action, printPrepP)
   return mspc, last 
 end
 if(_PATCH) then io.write(_PATCH) else io.write(_VERSION .. ' official') end
-print(" - Fleece 0.2.4")
+print(" - Fleece 0.3.0")
 
 
 local function measure1(prepP, prepare, p1, a1)

@@ -2,7 +2,7 @@
 *** Packages    : Fleece - fast Lua to JSON module                          ***
 *** File        : fleece.h                                                  ***
 *** Description : main outward header file - of not much use really as is   ***
-*** Version     : 0.2.4 / alpha                                             ***
+*** Version     : 0.3.0 / alpha                                             ***
 *** Requirement : Lua 5.1.4 - 5.1.4-2                                       ***
 *** Copyright   : 2011 Henning Diedrich, Eonblast Corporation               ***
 *** Author      : H. Diedrich <hd2010@eonblast.com>                         ***
@@ -23,5 +23,6 @@
 #include "lua.h"
 
 #define LUA_FLEECE "fleece"
+
 LUALIB_API int (luaopen_fleece) (lua_State *L);
 

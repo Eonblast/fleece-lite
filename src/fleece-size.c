@@ -2,13 +2,13 @@
 *** File        : Fleece - Lua to JSON module                               ***
 *** File        : fleece-size.c                                             ***
 *** Description : traverse Lua data and count the JSON string size needed   ***
-*** Version     : 0.2.4 / alpha                                             ***
+*** Version     : 0.3.0 / alpha                                             ***
 *** Requirement : Lua 5.1.4 - 5.1.4-2                                       ***
 *** Copyright   : (c) 2011 Henning Diedrich, Eonblast Corporation           ***
 *** Author      : H. Diedrich <hd2010@eonblast.com>                         ***
 *** License     : see file LICENSE                                          ***
 *** Created     :    Feb 2011                                               ***
-*** Changed     : 02 Mar 2011                                               ***
+*** Changed     : 19 Mar 2011                                               ***
 ***-------------------------------------------------------------------------***
 ***                                                                         ***
 ***  Fleece is optimized for the fastest Lua to JSON conversion and beats   ***
@@ -17,7 +17,7 @@
 ***                                                                         ***
 ***-------------------------------------------------------------------------***
 ***                                                                         ***
-***  Header files not cleaned up.                                           ***
+***                   NOT CURRENTLY ACTIVE OR ACCURATE                      ***
 ***                                                                         ***
 ***-------------------------------------------------------------------------***
 ***                                                                         ***
@@ -31,14 +31,26 @@
 /* 'inline' macro of main function */
 #define FLEECE_SIZE(__ctrl, __o) fleece_size_macro(__ctrl, __o)
 
-/* declaration */
+/*****************************************************************************\
+***                                                                         ***
+***                              DECLARATIONS                               ***
+***                                                                         ***
+\*****************************************************************************/
+
 void fleece_size_hash_part (insp_ctrl *ctrl, const Table *t, size_t *count, int *pure);
 void fleece_size_array_part (insp_ctrl *ctrl, const Table *t, size_t *count, int *pure);
 
-/*
- * 'inline' implementation
- *
- */
+/*****************************************************************************\
+***                                                                         ***
+***                            MAIN VALUE ENCODER                           ***
+***                                                                         ***
+ ***************************************************************************** 
+ * This macro switches over types and calls the respective size functions    *
+ * for the values identified. It is itself inlined into fleece_size_()       *
+ * and, TODO:, should inline multiple size macros, with the exception of     *
+ * function calls to the table handling functions.                           * 
+\*****************************************************************************/
+
 #define fleece_size_macro(_ctrl, _o) \
 { \
 	/* TODO: make switch */\
@@ -101,15 +113,30 @@ void fleece_size_array_part (insp_ctrl *ctrl, const Table *t, size_t *count, int
     } \
 } \
 
-/*
- * main function for size calculation 
- *
- */
+/*****************************************************************************\
+***                                                                         ***
+***                              SIZE ENTRY CALL                            ***
+***                                                                         ***
+ *****************************************************************************
+ * main size get function, called from the Lua-facing fleece_size(L)         *
+\*---------------------------------------------------------------------------*/
+
 void fleece_size_(insp_ctrl *ctrl, const TValue *o) {
 
 	fleece_size_macro(ctrl, o);
-	
 }
+
+/*****************************************************************************\
+***                                                                         ***
+***                            TABLE HANDLING                               ***
+***                                                                         ***
+ *****************************************************************************
+ * Internally, tables consist of an array and a hash part.                   *
+\* This is Lua 5.1.4 specific code                                           */
+
+/*---------------------------------------------------------------------------*\
+ * Array Part 
+\*---------------------------------------------------------------------------*/
 
 void fleece_size_array_part (insp_ctrl *ctrl, const Table *t, size_t *count, int *pure) {
   int lg;
@@ -134,13 +161,17 @@ void fleece_size_array_part (insp_ctrl *ctrl, const Table *t, size_t *count, int
   }
 }
 
+/*---------------------------------------------------------------------------*\
+ * Hash Part
+\*---------------------------------------------------------------------------*/
+
 void fleece_size_hash_part (insp_ctrl *ctrl, const Table *t, size_t *count, int *pure) {
 
   int i = sizenode(t);
   while (i--) {
 	Node *node = &t->node[i];
 	if(!ttisnil(key2tval(node)) && !ttisnil(gval(node))) {
-		FLEECE_SIZE(ctrl, (const TValue *)gkey(node));
+		FLEECE_SIZE(ctrl, (const TValue *)key2tval(node));
 		FLEECE_SIZE(ctrl, (const TValue *)gval(node));
 		ctrl->total_len += 2; // : , or (rsp closing bracket!)
 	}

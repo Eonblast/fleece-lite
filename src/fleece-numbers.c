@@ -2,13 +2,13 @@
 *** File        : Fleece - Lua to JSON module                               ***
 *** File        : fleece-numbers.c                                          ***
 *** Description : custom programmed float and integer to ascii conversion   ***
-*** Version     : 0.2.4 / alpha                                             ***
+*** Version     : 0.3.0 / alpha                                             ***
 *** Requirement : self-sufficient ANSI C                                    ***
 *** Copyright   : (c) 2011 Henning Diedrich, Eonblast Corporation           ***
 *** Author      : H. Diedrich <hd2010@eonblast.com>                         ***
 *** License     : see file LICENSE                                          ***
 *** Created     :    Feb 2011                                               ***
-*** Changed     : 02 Mar 2011                                               ***
+*** Changed     : 08 Mar 2011                                               ***
 ***-------------------------------------------------------------------------***
 ***                                                                         ***
 ***  Fleece is optimized for the fastest Lua to JSON conversion and beats   ***
@@ -27,8 +27,22 @@
 ***                                                                         ***
 ***-------------------------------------------------------------------------**/
 
+/*****************************************************************************\
+***                                                                         ***
+***                            LOOK UP TABLE                                ***
+***                                                                         ***
+\*****************************************************************************/
+
+/*---------------------------------------------------------------------------*\
+ *                              global tables                                *
+\*---------------------------------------------------------------------------*/
+
 char *mux0 = 0;
 char *mux = 0;
+
+/*---------------------------------------------------------------------------*\
+ *                              fill tables                                  *
+\*---------------------------------------------------------------------------*/
 
 void initmux() {
 
@@ -45,6 +59,15 @@ void initmux() {
 	while(i < 1000)	sprintf(m += 4, "%d", i++);
 }
 	
+/*****************************************************************************\
+***                                                                         ***
+***                             INTEGERS                                    ***
+***                                                                         ***
+\*****************************************************************************/
+
+/*---------------------------------------------------------------------------*\
+ *                          integer to ascii                                 *
+\*---------------------------------------------------------------------------*/
 
 void itoa(int pvalue, char* pstr, size_t *rlen) {
 
@@ -54,46 +77,8 @@ void itoa(int pvalue, char* pstr, size_t *rlen) {
 	char *str = pstr;
  
 	// take care of sign
-	if(value<0) { *str++ = '-'; value = -value; }
-/*	
-	if (value<10) {
-		*str++ = '0' + value;
-		#ifdef FLEECE_ALWAYS_DELIMIT
-		*str = 0;
-		#endif
-		*rlen = str - pstr;
-		goto ret;
-	}
+	if(pvalue<0) { *str++ = '-'; value = -value; }
 
-	if (value<100) {
-		char v10 = value / 10;
-		// for some reason, the '0' + is faster here.
-		*str++ = '0' + v10;
-		*str++ = '0' + (char)(value - v10 * 10);
-		#ifdef FLEECE_ALWAYS_DELIMIT
-		*str = 0;
-		#endif
-		*rlen = str - pstr;
-		goto ret;
-	}
-
-	if (value>=100 && value<1000) {
-		// printf("::%d", value);
-		// for some reason, this block is faster when coming in from above.
-		// for some reason, the num[] is faster here.
-		*str++ = num[value / 100];
-		*str++ = num[value / 10 % 10];
-		*str++ = num[value % 10];
-		#ifdef FLEECE_ALWAYS_DELIMIT
-		*str = 0;
-		#endif
-		*rlen = str - pstr;
-		goto ret;
-	}
-
-*/
-	/* its unclear why this block is as fast as ALL three above (when those are ALL
-	   commented out, but always slower when combined with one of the above. (sic!) */
 	/* -999 - +999 */
 	if (value<1000) {
 		// printf(" x %d", value);
@@ -101,7 +86,7 @@ void itoa(int pvalue, char* pstr, size_t *rlen) {
 		if(!mux) initmux();
 		char *q = mux + value*4;
 		char qq;
-		*str++=*q++; if(qq=*q++) { *str++=qq; if(qq=*q++) { *str++=qq; } }
+		*str++=*q++; if((qq=*q++)) { *str++=qq; if((qq=*q++)) { *str++=qq; } }
 		#ifdef FLEECE_ALWAYS_DELIMIT
 		*str=0;
 		#endif
@@ -109,19 +94,11 @@ void itoa(int pvalue, char* pstr, size_t *rlen) {
 		goto ret;
 	}
 
-/*  no gain
-	if (value<10000) {
-		*(str++)=  '0' + value / 1000;
-		value %= 1000;
-		goto lookup999;
-	}
-*/
-
 	if (value<1000000) {
 		if(!mux) initmux();
 		char *q = mux + (value/1000*4);
 		char qq;
-		*(str++)=*q++; if(qq=*q++) { *(str++)=qq; if(qq=*q++) { *(str++)=qq; } }
+		*(str++)=*q++; if((qq=*q++)) { *(str++)=qq; if((qq=*q++)) { *(str++)=qq; } }
 		// printf("Now: %s $ ", pstr);
 		value %= 1000;
 		q = mux0 + (4*value);
@@ -140,19 +117,19 @@ void itoa(int pvalue, char* pstr, size_t *rlen) {
        at http://www.strudel.org.uk/itoa/
        DO NOT CHANGE ANYTHING IN THIS FUNCTION WITHOUT SYNCHING ilen() */	
 
+	/* prototype TODO: move */
 	void strreverse(char* begin, char* end);
-	
+
+	/* note: sign is taken care of above. if minus, *str IS alread '-' here. */	
 	char* wstr=str;
-	int sign;
 	div_t res;
 	
-	// Conversion. Number is reversed.	
+	// Conversion. Number is reversed in the end.	
 	do {
 		res = div(value,10);
 		*wstr++ = num[res.rem];
 	} while((value=res.quot));
 
-	if(sign<0) *wstr++='-';
 	#ifdef FLEECE_ALWAYS_DELIMIT
 	*wstr='\0';
 	#endif
@@ -160,17 +137,27 @@ void itoa(int pvalue, char* pstr, size_t *rlen) {
 	
 	// Reverse string
 	strreverse(str,wstr-1);
+
+	#if SELFCHECK >=3
+	    *(pstr+*rlen) = 0;
+		char test[32];
+		sprintf(test, "%d", pvalue);
+		if(strcmp(test, pstr)) {
+			printf("fleece [3]: ** fast integer K&R conversion error: %d made to '%s', should be '%s'.\n", pvalue, pstr,test);
+			exit(180);
+		}
+	#endif
 	
 	ret:;
 	#if SELFCHECK >=3
-	        *(pstr+*rlen) = 0;
-		char test[32];
+	    *(pstr+*rlen) = 0;
 		sprintf(test, "%d", pvalue);
 		if(strcmp(test, pstr)) {
 			printf("fleece [3]: ** fast integer look up conversion error: %d made to '%s', should be '%s'.\n", pvalue, pstr,test);
 			exit(194);
 		}
 	#endif
+
 	return;
 }
 
@@ -180,9 +167,13 @@ void strreverse(char* begin, char* end) {
 		aux=*end, *end--=*begin, *begin++=aux;
 }
 
+/*---------------------------------------------------------------------------*\
+ *                              integer length                               *
+\*---------------------------------------------------------------------------*/
 /* Adapted from Stuart Lowe's optimization of the Kernighan & Ritchie sample
    at http://www.strudel.org.uk/itoa/
    DO NOT CHANGE ANYTHING IN THIS FUNCTION WITHOUT SYNCHING itoa() */
+// TODO: COMPROMISED?
 size_t ilen(int value) {
 	
 	// printf("int %d -> ", value);
@@ -202,6 +193,16 @@ size_t ilen(int value) {
 	// printf("len %d\n", count);
 	return count;
 }
+
+/*****************************************************************************\
+***                                                                         ***
+***                                 FLOAT                                   ***
+***                                                                         ***
+\*****************************************************************************/
+
+/*---------------------------------------------------------------------------*\
+ *                        float / double to ascii                            *
+\*---------------------------------------------------------------------------*/
 
 /* Adapted from Caldera Unix 6 user land ftoa() dump by Clifford Wolf
    http://www.clifford.at/histsrc/uxv6src/iolib/ftoa.c 
@@ -303,7 +304,12 @@ void dtoa (double x, char *pstr, int prec, char format, size_t *rlen)
 	return;
 }
 
+/*---------------------------------------------------------------------------*\
+ *                         FAST float / double length                        *
+\*---------------------------------------------------------------------------*/
+
 /* optimized conversion. Note that array indices usually run into getsize_integer */
+// TODO: COMPROMISED?
 size_t fdlen(double x, int prec, char format)
 {
 	static const double f[] = {-1.0, 0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0};
@@ -322,17 +328,23 @@ size_t fdlen(double x, int prec, char format)
 
 	return dlen(x, prec, format);
 }
+
+/*---------------------------------------------------------------------------*\
+ *                           float / double length                           *
+\*---------------------------------------------------------------------------*/
+
 /* Adapted from Caldera Unix 6 user land ftoa() dump by Clifford Wolf
    http://www.clifford.at/histsrc/uxv6src/iolib/ftoa.c 
    DO NOT CHANGE ANYTHING IN THIS FUNCTION WITHOUT SYNCHING dlen() */
+// TODO: COMPROMISED?
+
 size_t dlen (double x, int prec, char format)
 {
-	// printf("double %lf -> ", x);
+	
 	char str[32];
 	size_t rlen;
 	dtoa(x, str, prec, format, &rlen);
-	// printf("(dtoa/pr%d: %s, printf/pr%d: %*lf) ", prec, str, prec, prec, x);
-
+	
 	/* finds the ascii length of a floating point number */
 	/* it is not produced */
 	int ie, i, k, ndig, fstyle;
@@ -410,10 +422,6 @@ size_t dlen (double x, int prec, char format)
 		/* trim tail 0s */
 		if((format == 'g' || format == 'G')) count -= zeros_count;
 	}
-	// printf("len %zd\n",  count);
-
-//	assert_hard(count > 0, "");
-//	assert_hard();
 	
 	return count;
 }

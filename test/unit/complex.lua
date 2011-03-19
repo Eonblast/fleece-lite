@@ -2,7 +2,7 @@
 --- Package     : Fleece - fast Lua to JSON module                          ---
 --- File        : test/unit/complex.lua                                     ---
 --- Description : Fleece unit tests: more complex tests                     ---
---- Version     : 0.2.4 / alpha                                             ---
+--- Version     : 0.3.0 / alpha                                             ---
 --- Copyright   : 2011 Henning Diedrich, Eonblast Corporation               ---
 --- Author      : H. Diedrich <hd2010@eonblast.com>                         ---
 --- License     : see file LICENSE                                          ---
@@ -10,7 +10,10 @@
 --- Changed     : 05 Mar 2011                                               ---
 -------------------------------------------------------------------------------
 ---                                                                         ---
----  Complex unit tests for Fleece that take a little longer                ---
+---  Complex unit tests for Fleece that take a little longer. These tests   ---
+---  check fringe-conditions: overflows by one, or by very many consecutive ---
+---  brackets etc. Use it with smaller buffer sizes, around 100-1000, for   ---
+---  best results.                                                          ---
 ---                                                                         ---
 ---  Use: in Fleece root directory 'make unit-tests'                        ---
 ---                                                                         ---
@@ -25,7 +28,8 @@ module( "complex", lunit.testcase, package.seeall )
 -------------------------------------------------------------------------------
 -- utility
 -------------------------------------------------------------------------------
-local abc = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'}
+local abc = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 
+			 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'}
 
 -- Creation of Random Strings
 function randstr(length)
@@ -138,6 +142,12 @@ function test_table()
 			subtest_table(depth, innerlen)
 		end
 	end
+	
+	print("'Complex' tests done." )
+	print("Note that the last test is most effective when setting, in fleece-config.h,")
+	print("FLEECE_DEFAULT_LUCKY_BUF to 1000 and FLEECE_DEFAULT_PART_BUF to 100")
+	print("and useless if FLEECE_DEFAULT_LUCKY_BUF is set > ~10,100.")
+
 
 end
 

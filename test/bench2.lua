@@ -2,12 +2,12 @@
 --- Package     : Fleece - fast Lua to JSON module                          ---
 --- File        : test/bench2.lua                                           ---
 --- Description : Fleece vs JSON4 benchmarks: random tables, speed clocked  ---
---- Version     : 0.2.4 / alpha                                             ---
+--- Version     : 0.3.0 / alpha                                             ---
 --- Copyright   : 2011 Henning Diedrich, Eonblast Corporation               ---
 --- Author      : H. Diedrich <hd2010@eonblast.com>                         ---
 --- License     : see file LICENSE                                          ---
 --- Created     :    Feb 2011                                               ---
---- Changed     : 02 Mar 2011                                               ---
+--- Changed     : 18 Mar 2011                                               ---
 -------------------------------------------------------------------------------
 ---                                                                         ---
 ---  This runs Fleece vs JSON4, a native Lua implementation of JSON.        ---
@@ -64,7 +64,16 @@ function randstr(i)
       end
 
       return table.concat(r)
- end
+end
+
+function prcstr(part, base)
+    if secnd == 0 then return 0 end
+    x = math.floor(part / base * 100)
+    if(x <= 2) then
+        x = math.floor(part / base * 1000) / 10
+    end
+    return x
+end
 
 local t = {}
 local function measure(prepP, prepare, actionP, action, printPrepP)
@@ -94,13 +103,13 @@ local function measure(prepP, prepare, actionP, action, printPrepP)
   	 printf("%10.0fns/element ", mspc)
   else
 	  mspc = nil
-	  printf("%dx %-12s sample too small, could not measure ", cycles, actionP)
+	  printf("%dx %-12s ** sample too small, could not measure, use bench2-1k ** ", cycles, actionP)
   end
   
   return mspc, last 
 end
 if(_PATCH) then io.write(_PATCH) else io.write(_VERSION .. ' official') end
-print(" - Fleece 0.2.4")
+print(" - Fleece 0.3.0")
 
 local function measure3(prepP, prepare, prompt1, action1, prompt2, action2, prompt3, action3)
 
@@ -110,8 +119,8 @@ local function measure3(prepP, prepare, prompt1, action1, prompt2, action2, prom
 	printf("     %.20s.. \n", r2)
 	third, r3 = measure(prepP, prepare, prompt3, action3)
 	
-	if(secnd and third) then prc = math.floor(third / secnd * 100) 
-		printf("%2d%%  %.20s.. \n", prc, r3)
+	if(secnd and third) then prc = prcstr(third, secnd)
+		printf("%3g%% %.20s.. \n", prc, r3)
 	else 
 		prc = "-" 
 		printf("     %.20s.. \n", r3)

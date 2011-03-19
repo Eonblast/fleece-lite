@@ -1,26 +1,22 @@
 -------------------------------------------------------------------------------
 --- Package     : Fleece - fast Lua to JSON module                          ---
---- File        : test-fleece-rand.lua                                      ---
---- Description : test: short, random, nested tables are converted, printed ---
+--- File        : test-fleece-nonstop.lua                                   ---
+--- Description : test: endless short, random, nested tables                ---
 --- Version     : 0.3.0 / alpha                                             ---
 --- Copyright   : 2011 Henning Diedrich, Eonblast Corporation               ---
 --- Author      : H. Diedrich <hd2010@eonblast.com>                         ---
 --- License     : see file LICENSE                                          ---
---- Created     :    Feb 2011                                               ---
---- Changed     : 02 Mar 2011                                               ---
+--- Created     : 08 Mar 2011                                               ---
+--- Changed     : 08 Mar 2011                                               ---
 -------------------------------------------------------------------------------
----                                                                         ---
----  Fleece is optimized for the fastest Lua to JSON conversion and beats   ---
----  other JSON implementations by around 10 times, native Lua up to 100x.  ---
----  Please let us know about the speed you are observing!                  ---                                                         ---
 ---                                                                         ---
 -------------------------------------------------------------------------------
 
-print("Fleece Short Nested, Random Tests")
-print("---------------------------------")
-print("A couple of random tables (strict arrays) are created and converted.")
+print("Fleece Never Ending Short, Nested, Random Tests")
+print("-----------------------------------------------")
+print("Random tables (strict arrays) are created and converted.")
 print("You should build fleece first with 'make PLATFORM' and now be in ../src.")
-print("The first dump is printed using a native Lua function by Roberto.")
+print("The dump printed for comparison uses a native Lua function by Roberto.")
 
 package.cpath="src/?.so"
 fleece = require("fleece")
@@ -33,16 +29,27 @@ function nanosecs_per(time, cycles)
 	return time * 1000000000 / cycles
 end
 
-
 -- make interesting tables to test for fleece
 -- the lua random generator produces the same results with every next start
 
 -----------------------------------------------------------------------
 -- randomizing
 -----------------------------------------------------------------------
-abc={'a','e','i','o','u', ' ', ' ', '-', 'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','q','x','y','z'}
+abc={'a','e','i','o','u', ' ', '"', '/', '-', 'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','q','x','y','z'}
 abclen = #abc
+
 math.randomseed( tonumber(tostring(os.time()):reverse():sub(1,6)) )
+
+escflags = {'E','E0','E1','E2','E3','E4'}
+escflagsnum = #escflags
+
+function random_esc_flag()
+	
+	local r = math.random(1, escflagsnum)
+	print("Fleece escape flag: " .. escflags[r])
+	return escflags[r]
+
+end
 
 -- random string generator
 function rndstr(min, max)
@@ -163,84 +170,97 @@ function table.tostring( tbl )
   return "{" .. table.concat( result, "," ) .. "}"
 end
 
------------------------------------------------------------------------
--- test calls
------------------------------------------------------------------------
-function donk(t) print( table.val_to_str( t ) ) end
-sep = "---------------------------------------------------------------"
------------------------------------------------------------------------
-print(sep)
-print("Simplest Table: {1}")
-print(sep)
+loopcount = 0
+while true do
+	
+	  loopcount = loopcount +1
 
-t = {1}
-printf("Lua:  ")
-donk(t)
--- s = fleece.size(t)
--- print("Size: " .. s)
-s = fleece.json(t)
-print("JSON: " .. s)
+	  -----------------------------------------------------------------------
+	  -- test calls
+	  -----------------------------------------------------------------------
+	  function donk(t) print( table.val_to_str( t ) ) end
+	  sep = "---------------------------------------------------------------"
+	  sep2= "***************************************************************"
+	  -----------------------------------------------------------------------
+	  print(sep)
+	  print("Simplest Table: {1}")
+	  print(sep)
+	  
+	  t = {1}
+	  printf("Lua:  ")
+	  donk(t)
+	  -- s = fleece.size(t)
+	  -- print("Size: " .. s)
+	  s = fleece.json(t, random_esc_flag())
+	  print("JSON: " .. s)
+	  
+	  -----------------------------------------------------------------------
+	  
+	  print(sep)
+	  print("Simple Table: {['foo']='bar',11,22,33,{'a','b'}}")
+	  print(sep)
+	  
+	  t = {['foo']='bar',11,22,33,{'a','b'}}
+	  printf("Lua:  ")
+	  donk(t)
+	  -- s = fleece.size(t)
+	  -- print("Size: " .. s)
+	  s = fleece.json(t, random_esc_flag())
+	  print("JSON: " .. s)
+	  
+	  -----------------------------------------------------------------------
+	  
+	  print(sep)
+	  print("Random Table of 10 elements, possibly nested")
+	  print(sep)
+	  
+	  t = rndtbl(10)
+	  printf("Lua:  ")
+	  donk(t)
+	  -- s = fleece.size(t)
+	  -- print("Size: " .. s)
+	  s = fleece.json(t, random_esc_flag())
+	  print("JSON: " .. s)
+	  
+	  -----------------------------------------------------------------------
+	  
+	  print(sep)
+	  print("Random Table of 50 elements, most likely nested")
+	  print(sep)
+	  
+	  t = rndtbl(50)
+	  printf("Lua:  ")
+	  donk(t)
+	  -- s = fleece.size(t)
+	  -- print("Size: " .. s)
+	  print("................................................................")
+	  s = fleece.json(t, random_esc_flag())
+	  print("JSON: " .. s)
+	  
+	  print(sep)
+	  
+	  -----------------------------------------------------------------------
+	  
+	  print(sep)
+	  print("Random Table of 20 elements, shifting to associative midway")
+	  print(sep)
+	  
+	  t = rndtbl(20, nil, nil, true)
+	  printf("Lua:  ")
+	  donk(t)
+	  -- s = fleece.size(t)
+	  -- print("Size: " .. s)
+	  print("................................................................")
+	  s = fleece.json(t, random_esc_flag())
+	  print("JSON: " .. s)
+	  
+	  print(sep)
+	  
+	  print("Note that floating numbers have a different precision. That will be controllable by parameter.")
 
------------------------------------------------------------------------
-
-print(sep)
-print("Simple Table: {['foo']='bar',11,22,33,{'a','b'}}")
-print(sep)
-
-t = {['foo']='bar',11,22,33,{'a','b'}}
-printf("Lua:  ")
-donk(t)
--- s = fleece.size(t)
--- print("Size: " .. s)
-s = fleece.json(t)
-print("JSON: " .. s)
-
------------------------------------------------------------------------
-
-print(sep)
-print("Random Table of 10 elements, possibly nested")
-print(sep)
-
-t = rndtbl(10)
-printf("Lua:  ")
-donk(t)
--- s = fleece.size(t)
--- print("Size: " .. s)
-s = fleece.json(t)
-print("JSON: " .. s)
-
------------------------------------------------------------------------
-
-print(sep)
-print("Random Table of 50 elements, most likely nested")
-print(sep)
-
-t = rndtbl(50)
-printf("Lua:  ")
-donk(t)
--- s = fleece.size(t)
--- print("Size: " .. s)
-print("................................................................")
-s = fleece.json(t)
-print("JSON: " .. s)
-
-print(sep)
-
------------------------------------------------------------------------
-
-print(sep)
-print("Random Table of 20 elements, shifting to associative midway")
-print(sep)
-
-t = rndtbl(20, nil, nil, true)
-printf("Lua:  ")
-donk(t)
--- s = fleece.size(t)
--- print("Size: " .. s)
-print("................................................................")
-s = fleece.json(t)
-print("JSON: " .. s)
-
-print(sep)
-
-print("Note that floating numbers have a different precision. That will be contrallable by parameter.")
+	
+	  print(sep2)
+	  print("Loop #" .. loopcount)
+	  print(sep2)
+	  
+end

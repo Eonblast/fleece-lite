@@ -2,13 +2,13 @@
 *** Package     : Fleece Lite - Lua to JSON conversion                      ***
 *** File        : fleece-lua.c                                              ***
 *** Description : interface to to Lua                                       ***
-*** Version     : 0.2.4 / alpha                                             ***
+*** Version     : 0.3.0 / alpha                                             ***
 *** Requirement : Lua 5.1.4 - 5.1.4-2                                       ***
 *** Copyright   : 2011 Henning Diedrich, Eonblast Corporation               ***
 *** Author      : H. Diedrich <hd2010@eonblast.com>                         ***
 *** License     : see file LICENSE                                          ***
 *** Created     :    Feb 2011                                               ***
-*** Changed     : 02 Mar 2011                                               ***
+*** Changed     : 19 Mar 2011                                               ***
 ***-------------------------------------------------------------------------***
 ***                                                                         ***
 ***  Fleece is optimized for the fastest Lua to JSON conversion and beats   ***
@@ -16,23 +16,31 @@
 ***  This file contains not much interesting stuff in this regard. There    ***
 ***  is one bit original Lua source copied here to speed things up.         ***
 ***                                                                         ***
-***-------------------------------------------------------------------------***
-***                                                                         ***
-***  Header files not cleaned up.                                           ***
-***                                                                         ***
 ***-------------------------------------------------------------------------**/
 
 #include "fleece-config.h"
 
+/*****************************************************************************\
+***                                                                         ***
+***                               DECLARATIONS                              ***
+***                                                                         ***
+ *****************************************************************************/
+
 LUALIB_API int luaopen_fleece (lua_State *L);
-static int fleece_size(lua_State *L);
+static int fleece_size(lua_State *L); /* not used */
 static int fleece_json(lua_State *L);
 static int fleece_hello(lua_State *L);
+int return_nil(lua_State *L);
 
-static int fleece_hello(lua_State *L) {
-	printf("Hello LuaJSON World!\n");
-	return 1;
-}
+/*****************************************************************************\
+***                                                                         ***
+***                               LUA HOOKS                                 ***
+***                                                                         ***
+ *****************************************************************************/
+
+/*---------------------------------------------------------------------------*\
+ *  List of functions to register with Lua                                   *
+\*---------------------------------------------------------------------------*/
 
 static const struct luaL_Reg fleece [] = {
 	{"hello", fleece_hello }, /* registering the function */
@@ -41,36 +49,30 @@ static const struct luaL_Reg fleece [] = {
 	{ NULL, NULL }
 };
 
+/*---------------------------------------------------------------------------*\
+ *  Registration Function for Opening the Fleece Module                      *
+\*---------------------------------------------------------------------------*/
+
 LUALIB_API int luaopen_fleece (lua_State *L) {
 	luaL_register(L, "fleece", fleece); /* registering the module */
 	return 1;
 }
 
-// --------------------------------------------------------------------
-// UTIL
-// --------------------------------------------------------------------
-
-#define VERB(m) printf("fleece: %s\n", m)
-static TValue *index2adr (lua_State *L, int idx); /// TODO: put that decl somewhere
-
-int return_nil(lua_State *L)
-{
-    lua_settop(L, 0);   // Clear stack
-    lua_pushnil(L);
-    return 1;
-}
-
-/* PARAMETERS, LUA SIDE
- * 
- *  NON IMPLEMENTED YET BEYOND THE FIRST, THE TABLE.
- */
- // (max balanced) -12 +0
+/*****************************************************************************\
+***                                                                         ***
+***                            PARAMETER HANDLING                           ***
+***                                                                         ***
+ *****************************************************************************
+ * PARAMETERS, LUA SIDE, ONLY first and second are used as of yet.           */
+ 
+// (max balanced) -12 +0
 insp_ctrl *insp_ctrl_init(insp_ctrl *ctrl, lua_State *L)
 {
     lua_settop(L, 12);   // arguments, max 12
 
 	const TValue *subj  = index2adr(L, -12);
 	char *flags         = (char *)lua_tostring(L, -11);
+	
 	int precision       = (int)lua_tointeger(L, -10);
 //	const TValue *repr  = index2adr(L, -9);
 	int primary         = (int)lua_tointeger(L, -8);
@@ -90,9 +92,62 @@ insp_ctrl *insp_ctrl_init(insp_ctrl *ctrl, lua_State *L)
     return ctrl;
 }
 
-/**
- * dry run to find the JSON result size, without creating it
- */
+/*****************************************************************************\
+***                                                                         ***
+***                              LUA EXPORTS                                ***
+***                                                                         ***
+ ***************************************************************************** 
+ *         entry point functions of calls coming from Lua scripts            *
+\*****************************************************************************/ 
+
+/*---------------------------------------------------------------------------*\
+ *  THE MAIN UTILITY: Convert (stringify) a Lua value to a JSON string
+\*---------------------------------------------------------------------------*/
+
+static int fleece_json(lua_State *L) {
+
+	#if VERBOSITY >= 5
+	printf("\n----------------------------------------------\n");
+	#endif
+
+	insp_ctrl ctrl;
+	insp_ctrl_init(&ctrl, L);
+
+	void *freer;
+	char *str = fleece_stringify(&ctrl, ctrl.subject, &freer);
+	lua_pushstring(L, str); /*  (*)  */
+
+ 	insp_ctrl_close(&ctrl); 
+	free_collapsed(freer); /* (keeps "lucky" buffer) */
+
+	#if VERBOSITY >= 5
+	printf("\n==============================================\n");
+	#endif
+	
+	return 1;
+	
+	/* (*) Pushes the zero-terminated string pointed to by s onto the
+	stack. Lua makes (or reuses) an internal copy of the given
+	string, so the memory at s can be freed or reused immediately
+	after the function returns. The string cannot contain embedded
+	zeros; it is assumed to end at the first zero. */
+}
+
+/*---------------------------------------------------------------------------*\
+ ** Hello test call implementation                                          **
+\*---------------------------------------------------------------------------*/
+
+static int fleece_hello(lua_State *L) {
+	printf("Hello LuaJSON World!\n");
+	return 1;
+	/* that's it for this function! */	
+}
+
+/*---------------------------------------------------------------------------*\
+ ** Dry run to find the JSON result size, without creating it               **
+\*---------------------------------------------------------------------------*/
+/* Currently not documented, not maintained and not returning exact results. */
+
 static int fleece_size(lua_State *L) {
 
 	insp_ctrl ctrl;
@@ -106,42 +161,29 @@ static int fleece_size(lua_State *L) {
 	return 1;
 }
 
+/*---------------------------------------------------------------------------*\
+ ** Helper for placeholder functions                                        **
+\*---------------------------------------------------------------------------*
 
-/**
- * convert (stringify) a Lua value to a JSON string
- */
-static int fleece_json(lua_State *L) {
-
-	#if VERBOSITY >= 5
-	printf("\n----------------------------------------------\n");
-	#endif
-
-	insp_ctrl ctrl;
-	insp_ctrl_init(&ctrl, L);
-
-	void *freer;
-	char *str = fleece_stringify(&ctrl, ctrl.subject, &freer);
-	lua_pushstring(L, str); // *)
-
-	insp_ctrl_close(&ctrl); 
-	free_collapsed(freer); // (keeps lucky)
-
-	#if VERBOSITY >= 5
-	printf("\n==============================================\n");
-	#endif
-	
-	return 1;
-	
-	/* *) Pushes the zero-terminated string pointed to by s onto the
-	stack. Lua makes (or reuses) an internal copy of the given
-	string, so the memory at s can be freed or reused immediately
-	after the function returns. The string cannot contain embedded
-	zeros; it is assumed to end at the first zero. */
+int return_nil(lua_State *L)
+{
+    lua_settop(L, 0);   // Clear stack
+    lua_pushnil(L);
+    return 1;
 }
+-*/
 
-/* -------------------------------------------------------------------------- */
+/*****************************************************************************\
+***                                                                         ***
+***                              ORIGINAL LUA                               ***
+***                                                                         ***
+ ***************************************************************************** 
+ *      copy of needed original Lua source, which Lua does not export        *
+\*****************************************************************************/ 
 
-/* copy of original Lua source, which Lua does not export */
+/*---------------------------------------------------------------------------*\
+**  Get the C pointer for the value on the stack                             **
+\*---------------------------------------------------------------------------*/
 static TValue *index2adr (lua_State *L, int idx) {
 
   if (idx > 0) {   
@@ -171,3 +213,4 @@ static TValue *index2adr (lua_State *L, int idx) {
     }
   }
 }
+

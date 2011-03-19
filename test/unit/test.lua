@@ -2,7 +2,7 @@
 --- Package     : Fleece - fast Lua to JSON module                          ---
 --- File        : test/unit/basics.lua                                      ---
 --- Description : Fleece unit tests: basic set of tests                     ---
---- Version     : 0.2.4 / alpha                                             ---
+--- Version     : 0.3.0 / alpha                                             ---
 --- Copyright   : 2011 Henning Diedrich, Eonblast Corporation               ---
 --- Author      : H. Diedrich <hd2010@eonblast.com>                         ---
 --- License     : see file LICENSE                                          ---

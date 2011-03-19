@@ -21,8 +21,8 @@
 -------------------------------------------------------------------------------
 
 print()
-print("Fleece Benchmarks")
-print("=================")
+print("Fleece Benchmarks (10,000 iterations)")
+print("=====================================")
 print("A couple of random tables are created and speed is clocked.")
 print("You should have built fleece first with 'make <PLATFORM>', ")
 print("and now be in the fleece root directory.")
@@ -58,7 +58,7 @@ local t = {}
 local function measure(prepP, prepare, actionP, action)
 
   local items  = 1000
-  local cycles = 1000
+  local cycles = 10000
   local clock  = os.clock
 
 print("-------------------------------------------------------------------------")
@@ -81,7 +81,7 @@ print("-------------------------------------------------------------------------
 	  printf("%10.0f nanosec/element => %3.0fM elements/sec \n", mark,
 	    math.floor(1000 / mark))
   else
-	  printf("%dx %-12s ** sample too small, could not measure, use bench-10k \n", cycles, actionP)
+	  printf("%dx %-12s ** sample too small, could not measure, increase 'cycles' in this script \n", cycles, actionP)
   end
 end
 if(_PATCH) then io.write(_PATCH) else io.write(_VERSION .. ' official') end
@@ -114,4 +114,4 @@ measure("t[randstr(i)]=randstr(i)",
 print("-------------------------------------------------------------------------")
 print("There are more benchmarks. Try bench2, bench3a, bench7a.")
 print("Run 'make' w/o parameters for details, or see test/README.md.")
-print("Repeat runs will differ. For finer grained figures run bench-10k. ")
+print("Repeat runs will differ.")

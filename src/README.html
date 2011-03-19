@@ -32,19 +32,20 @@
 		pre.code-index,
 		pre.code,
 		pre
-				 { background-color: #e8d090; /* #fff8d2; */
-					border: 1px solid #e0c888; /* #f4eac8; */
+				 { background-color: #f4eca8; /* #e2d090; */ /* #fff8d2; */
+					border: 2px solid #fcb000; /* #f4eac8; */
 					padding: 1em;
 					border-bottom-left-radius: 1em; 
 					-moz-border-radius-bottomleft: 1em; 
 					border-top-right-radius: 1em; 
 					-moz-border-radius-topright: 1em; 
+					overflow: hidden; scrollbar: auto;
 				  }
 		
 		pre.codelast-index,
 		pre.codelast
-				 { background-color: #e8d090; /* #fff8d2; */
-					border: 1px solid #e0c888; /* #f4eac8; */
+				 { background-color: #f4eca8;  /* #e2d090; */ /* #fff8d2; */
+					border: 2px solid #fcb000; /* #f4eac8; */
 					padding: 1em;
 					border-bottom-left-radius: 1em; 
 					-moz-border-radius-bottomleft: 1em; 
@@ -86,25 +87,88 @@
 </div>
 <div class=body>
 
-<p><strong>Eonblast Fleece 0.2.4</strong></p>
-
+<p><strong>Eonblast Fleece 0.3.0</strong></p>
 
 <h2>Source Folder</h2>
 
-<p><strong>C files:</strong></p>
+<h4>Lua-Facing Files</h4>
 
-<p><strong>fleece.c</strong>              main module file, includes the other c files  </p>
+<pre><code>fleece-config.h       compile-time configurations
 
-<p><strong>fleece-lua.c</strong>          lua facing module functions  </p>
+fleece.c              main module file, includes the other c files  
+fleece.h              main header file, not relevant  
 
-<p><strong>fleece-buffers.c</strong>      custom string buffer source <br/>
-<strong>fleece-insp_ctrl.c</strong>    traversal control structure <br/>
-<strong>fleece-numbers.c</strong>      number to ascii conversions <br/>
-<strong>fleece-size.c</strong>         JSON size pre-calculation <br/>
-<strong>fleece-stringify.c</strong>    Lua data traversal and JSON string production  </p>
+fleece-lua.c          lua-facing Fleece functions (hello &amp; json so far)  
+</code></pre>
 
 
-<p>Lua headers are included from ../include/ For tests see, well, the ../test/ folder.</p>
+<h4>Main Module Files</h4>
+
+<pre><code>fleece-intern.h       internal header file
+
+fleece-buffers.c      custom string buffer source  
+fleece-buffers.h
+
+fleece-insp_ctrl.c    traversal control structure  
+fleece-insp_ctrl.h      
+
+fleece-numbers.c      number to ascii conversions  
+fleece-size.c         JSON size pre-calculation  
+fleece-stringify.c    Lua data traversal and JSON string production  
+fleece-copy.c         JSON-optimized copying sources
+</code></pre>
+
+
+<h4>Other Files</h4>
+
+<pre><code>Makefile             sub make file, used by the Makefile in Fleece root
+
+README.md            this file
+README.html          same as README.md in HTML format
+
+fleece.o             Fleece C compilation file, present after build
+fleece.so            Fleece C library, present after build
+</code></pre>
+
+<p><em>Lua</em> headers are included from ../include/ </p>
+
+<p>For tests see the ../test/ folder.</p>
+
+<h2>Escaping</h2>
+
+<p>If you use escaping, assembler <em>can</em> make a difference. Fleece does well for non-escaped strings with or without assembler.  But consider guarding your string contents against special characters yourself in any case, and do any necessary escaping yourself. In most cases this will prevent much double checking. The setting <strong>E0</strong> then ignores escaping issues entirely and is the fastest option for JSON conversion. It allows for strings being copied as they are, without looking at the individual characters.</p>
+
+<h2>Assembler</h2>
+
+<p>Assembler helps most with strings that <em>are</em> to get their control characters escaped, as prescribed by the JSON standard. Assembler is implemented only for x86, using gcc inline/AT&amp;T format. Switch assembler on by using linux-asm, linux-64-asm, or macosx-asm. The options <em>E1</em> - <em>E4</em> are the most affected.</p>
+
+<p>The non-assembler parts are sufficiently fast and optimized for their task. Depending on architecture, they are only around 10 to 50% slower than assembler, mostly due to highly optimized C library memcpy functions. </p>
+
+<p>Obviously, when escaping characters, the built-in memcpy can not be used alone but string traversing has to take place. strcspn() turned out to be no help performance-wise. </p>
+
+<h2>Copy Strategies</h2>
+
+<p>There are multiple strategies visible in the fleece-copy.c source, some will be abandoned and cleaned up. Basically: </p>
+
+<h4>Buffer Space</h4>
+<p>A) count first, check remaining buffer, enlarge if nec., then copy <br/>
+B) check if remaining buffer &lt; 'max escape case' (6x), enlarge, copy <br/>
+C) without any checks rely on assured reserve buffer for single chars   </p>
+
+<h4>Size Prediction</h4>
+<p>I) plain count, for finding the destination size, then copy <br/>
+II) count and copy, cancel copying when exceeding assured reserve <br/>
+III) use built in C lib strcspn to count escape characters (--)  </p>
+
+<h4>Copy Control</h4>
+<p>i) memory-copy using given source length <br/>
+ii) string-copy relying on final 0 (faster for ASM, not tru to Lua)  </p>
+
+<h4>Copying</h4>
+<p>1) use built in C lib memcpy <br/>
+2) use native C programmed memcpy (faster for old PPC) (--) <br/>
+3) use native C programmed, block pointer casting-memcpy <br/>
+4) use assembler (x86 only, 10 - 20% faster, more on older CPUs)  </p>
 
 <hr/>
 <p>README fleece/src hd Feb 2011 - powered by Eonblast http://www.eonblast.com</p>
