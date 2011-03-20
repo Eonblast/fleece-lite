@@ -10,7 +10,7 @@ Please send any kind of feedback my way: bugs, docs, source, comments, random th
 
 **Download:**
 
-	git clone https://Eonblast@github.com/Eonblast/Fleece-Lite.git fleece
+	git clone git://github.com/Eonblast/fleece-lite.git fleece
 
 **Build**, at this point, Linux and Mac OS X only:
 
