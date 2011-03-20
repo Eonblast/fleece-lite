@@ -251,6 +251,11 @@ Straight forward Unit Testing
 **Niklas Frykholm: [Markdown.lua](http://www.frykholm.se/files/markdown.lua)**  
 Invaluable preview and doc tool
 
+## Humor
+
+Ugh. Do you access Lua table internals directly? Well, I'm sorry for being rash, but I do not have any decent constructive words for such artrocity. :-(  
+**Alexander Gladysh**
+
 
 ## License
 
@@ -275,6 +280,5 @@ HOLDERS  BE  LIABLE FOR  ANY CLAIM,  DAMAGES OR  OTHER LIABILITY,
 WHETHER IN AN ACTION OF  CONTRACT,  TORT  OR OTHERWISE,  ARISING
 FROM,  OUT OF OR  IN CONNECTION WITH THE SOFTWARE  OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
-
 _______________________________________________________________________
 README fleece hd Mar 2011 - powered by Eonblast http://www.eonblast.com
