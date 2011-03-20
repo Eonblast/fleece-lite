@@ -1,4 +1,4 @@
-**Eonblast Fleece 0.3.0**
+**Eonblast Fleece 0.3.1**
 
 # Fleece Tests, Benchmarks, Comparison
 
@@ -41,7 +41,7 @@ This will print out something like this:
     A couple of random tables are created and speed is clocked.
     You should have built fleece first with 'make <PLATFORM>', 
     and now be in the fleece root directory.
-    Lua 5.1 official - Fleece 0.3.0
+    Lua 5.1 official - Fleece 0.3.1
     -------------------------------------------------------------------------
     i=[1..1000] in t[i]=i       for 1000 cycles of fleece.json(t)
     . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -95,7 +95,7 @@ This will result into a screen like this:
     A couple of random tables are created and speed is clocked.
     You should have built fleece first with 'make <PLATFORM>' 
     and should now be in the fleece root directory.
-    Lua 5.1 official - Fleece 0.3.0
+    Lua 5.1 official - Fleece 0.3.1
     ---------------------------------------------------------------------------------
     1000 elements in t[i]=i                   
     100x json4.encode(t)             3400ns/element      [1,2,3,4,5,6,7,8,9,1.. 

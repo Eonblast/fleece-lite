@@ -2,7 +2,7 @@
 *** File        : Fleece - Lua to JSON module                               ***
 *** File        : fleece-intern.h                                           ***
 *** Description : internal header file                                      ***
-*** Version     : 0.3.0 / alpha                                             ***
+*** Version     : 0.3.1 / alpha                                             ***
 *** Requirement : self sufficient ANSI C                                    *** 
 *** Copyright   : 2011 Henning Diedrich, Eonblast Corporation               ***
 *** Author      : H. Diedrich <hd2010@eonblast.com>                         ***
@@ -35,7 +35,7 @@
 #include "fleece-buffers.h"
 #include "fleece-ctrl.h"
 
-#define FLEECE_VERSION 0.3.0
+#define FLEECE_VERSION 0.3.1
 
 /*****************************************************************************\
 ***                                                                         ***

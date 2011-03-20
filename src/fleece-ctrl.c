@@ -2,7 +2,7 @@
 *** Packages    : Fleece - fast Lua to JSON module                          ***
 *** File        : fleece-insp_ctrl.c                                        ***
 *** Description : Lua data traversal & JSON string build control structure  ***
-*** Version     : 0.3.0 / alpha                                             ***
+*** Version     : 0.3.1 / alpha                                             ***
 *** Requirement : self sufficient ANSI C                                    ***
 *** Copyright   : (c) 2011 Eonblast Corporation                             ***
 *** Author      : H. Diedrich <hd2010@eonblast.com>                         ***

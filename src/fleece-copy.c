@@ -2,7 +2,7 @@
 *** File        : Fleece - Lua to JSON module                               ***
 *** File        : fleece-copy.c                                             ***
 *** Description : Optimized counting, copying and escaping for JSON strings ***
-*** Version     : 0.3.0 / alpha                                             ***
+*** Version     : 0.3.1 / alpha                                             ***
 *** Requirement : self sufficient ANSI C + optional x86 ASM                 ***
 *** Copyright   : 2011 Henning Diedrich, Eonblast Corporation               ***
 *** Author      : H. Diedrich <hd2010@eonblast.com>                         ***

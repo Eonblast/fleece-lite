@@ -1,4 +1,4 @@
-**Eonblast Fleece 0.3.0**
+**Eonblast Fleece 0.3.1**
 
 Lua Header Files
 ----------------

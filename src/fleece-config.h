@@ -2,7 +2,7 @@
 *** Packages    : Fleece - fast Lua to JSON module                          ***
 *** File        : fleece-config.h                                           ***
 *** Description : header with compile switches and default definitions      ***
-*** Version     : 0.3.0 / alpha                                             ***
+*** Version     : 0.3.1 / alpha                                             ***
 *** Copyright   : 2011 Henning Diedrich, Eonblast Corporation               ***
 *** Author      : H. Diedrich <hd2010@eonblast.com>                         ***
 *** License     : see file LICENSE                                          ***

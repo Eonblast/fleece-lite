@@ -2,7 +2,7 @@
 --- Package     : Fleece - fast Lua to JSON module                          ---
 --- File        : test/bench-fleece.lua                                     ---
 --- Description : Fleece benchmarks: random tables, speed clocked           ---
---- Version     : 0.3.0 / alpha                                             ---
+--- Version     : 0.3.1 / alpha                                             ---
 --- Copyright   : 2011 Henning Diedrich, Eonblast Corporation               ---
 --- Author      : H. Diedrich <hd2010@eonblast.com>                         ---
 --- License     : see file LICENSE                                          ---
@@ -72,9 +72,10 @@ print("-------------------------------------------------------------------------
   while(i <= items) do prepare(i); i = i + 1 end
 
   i = 1
+  local last = nil
   io.write("action ... ")
   local tm = clock()
-  while(i <= cycles) do action(i); i = i + 1 end
+  while(i <= cycles) do last = action(i); i = i + 1 end
   tm = clock() - tm
   if tm ~= 0 then
       mark = nanosecs_per(tm, cycles * items)
@@ -85,7 +86,7 @@ print("-------------------------------------------------------------------------
   end
 end
 if(_PATCH) then io.write(_PATCH) else io.write(_VERSION .. ' official') end
-print(" - Fleece 0.3.0")
+print(" - Fleece 0.3.1")
 
 
 measure("t[i]=i",

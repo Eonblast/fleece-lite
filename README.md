@@ -1,4 +1,4 @@
-# Eonblast Fleece 0.3.0 Lite
+# Eonblast Fleece 0.3.1 Lite
 
 **Fast Lua to JSON conversion.**
 
@@ -184,6 +184,12 @@ This License is valid for Fleece Lite. It is not applicable for the master branc
 
 ## History
 
+**0.3.1 lite** - 20 Mar 2011 - hd  
+
+* added missing header in include/
+* added more benchmarks for Lua-Yajl
+* added benchmark sample page
+
 **0.3.0 lite** - 19 Mar 2011 - hd  
 
 * optimized C count, escape and copy code
@@ -225,6 +231,11 @@ This License is valid for Fleece Lite. It is not applicable for the master branc
 * first pulished version  
 
 ## Credits
+
+Thanks for testing and suggesting improvements:
+
+**[Vadim Peretokin](https://github.com/vadi2)**  
+**[Etan Reisner](https://github.com/deryni)**  
 
 Thanks to these contributors to the Lua ecosystem:
 

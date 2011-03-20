@@ -2,7 +2,7 @@
 --- Package     : Fleece - fast Lua to JSON module                          ---
 --- File        : test/bench7-solo.lua                                      ---
 --- Description : Fleece only, as in 7: random escape chars, clocked        ---
---- Version     : 0.3.0 / alpha                                             ---
+--- Version     : 0.3.1 / alpha                                             ---
 --- Copyright   : 2011 Henning Diedrich, Eonblast Corporation               ---
 --- Author      : H. Diedrich <hd6010@eonblast.com>                         ---
 --- License     : see file LICENSE                                          ---
@@ -104,7 +104,7 @@ local function measure(prepP, prepare, actionP, action, printPrepP)
   end
 
   i = 1
-  last = nil
+  local last = nil
   local tm = clock()
   while(i <= cycles) do last = action(i); i = i + 1 end
   tm = clock() - tm
@@ -122,7 +122,7 @@ end
 
 
 if(_PATCH) then io.write(_PATCH) else io.write(_VERSION .. ' official') end
-print(" - Fleece 0.3.0")
+print(" - Fleece 0.3.1")
 
 
 local function measureX(prepP, prepare,   

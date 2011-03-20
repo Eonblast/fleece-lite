@@ -1,28 +1,31 @@
 -------------------------------------------------------------------------------
 --- Package     : Fleece - fast Lua to JSON module                          ---
---- File        : test/bench7.lua                                           ---
---- Description : Fleece vs JSON4 and luajson: random escape chars, clocked ---
+--- File        : test/bench74.lua                                          ---
+--- Description : Fleece vs JSON4, luajson, Lua-Yajl: rand escapes, clocked ---
 --- Version     : 0.3.1 / alpha                                             ---
---- Copyright   : 6011 Henning Diedrich, Eonblast Corporation               ---
---- Author      : H. Diedrich <hd6010@eonblast.com>                         ---
+--- Copyright   : 2011 Henning Diedrich, Eonblast Corporation               ---
+--- Author      : H. Diedrich <hd2010@eonblast.com>                         ---
 --- License     : see file LICENSE                                          ---
---- Created     : 08 Mar 6011                                               ---
---- Changed     : 08 Mar 6011                                               ---
+--- Created     : 20 Mar 2011                                               ---
+--- Changed     : 20 Mar 2011                                               ---
 -------------------------------------------------------------------------------
 ---                                                                         ---
 ---  Fleece is optimized for the fastest Lua to JSON conversion and beats   ---
 ---  other JSON implementations by around 10 times, native Lua up to 100x.  ---
 ---  Please let me know about the speed you are observing.                  ---
----  hd6010@eonblast.com                                                    ---
+---  hd2010@eonblast.com                                                    ---
 ---                                                                         ---
----  This compares Fleece to a native Lua implementation and a C library    ---
+---  This compares Fleece to a native Lua implementation and two C libraries---
 ---  with Fleece' diverse escape settings switched on or off.               ---
 ---                                                                         ---
----  JSON4 0.9.60: (aka JSON4Lua, JSON for Lua) http://json.luaforge.net/   ---
+---  JSON4 0.9.20: (aka JSON4Lua, JSON for Lua) http://json.luaforge.net/   ---
 ---  LuaJSON 1.1: (aka luajsonlib) http://luaforge.net/projects/luajsonlib/ ---
+---  Yajl 1.0.9: http://lloyd.github.com/yajl/                              ---
+---  Lua-yajl Oct '10: http://github.com/brimworks/lua-yajl/                ---
 ---                                                                         ---
----  Use: lua test/bench7.lua                                               ---
----  Or:  make bench7                                                       ---
+---  Building with Yajl is not always fun, you can safely skip this script. ---
+---                                                                         ---
+---  Use: lua test/bench74.lua                                              ---
 ---                                                                         ---
 -------------------------------------------------------------------------------
 
@@ -31,8 +34,13 @@ print("=========================================================================
 print("A couple of random tables are created, with escape characters and speed is clocked.")
 print("You should have built fleece first with 'make <PLATFORM>', ")
 print("and also built luajson.so with 'make <PLATFORM>-test,")
-print("and now be in the fleece root directory.")
-print("IF THIS TEST CRASHES, TRY BENCH7a & BENCH7b TO SEE WHO DOES.")
+print("And now be in the fleece root directory. You should have ")
+print("built yajl into etc/yajl.")
+print("There is no support in fleece to build yajl or lua-yajl.")
+print("You need to get and build yajl and lua-yajl manually.")
+print("Yajl 1.0.9: http://lloyd.github.com/yajl/")
+print("Lua-yajl Oct '10: http://github.com/brimworks/lua-yajl/")
+print("IF THIS TEST CRASHES, TRY BENCH7a, BENCH7b, BENCH4d TO SEE WHO IS AT FAULT.")
 
 ELEMENTS = 1000
 CYCLES   = 1000
@@ -44,11 +52,16 @@ json4 = require("json")
 package.cpath="etc/luajson/?.so"
 luajson = require("luajson")
 
+
 -- luajson stuff
 local base = _G
 local json = luajson
 json.null = {_mt = {__tostring = function () return "null" end, __call = function () return "null" end}}
 base.setmetatable(json.null, json.null._mt)
+
+-- luayajl stuff
+package.cpath = "etc/yajl/?.so" 
+local yajl  = require("yajl")
 
 math.randomseed( os.time() )
 math.random()
@@ -99,6 +112,15 @@ function randstr(i)
       return table.concat(r)
  end
 
+function prcstr(part, base)
+    if base == 0 or base == nil or part == nil then return 0 end
+    x = math.floor(part / base * 100)
+    if(x <= 2) then
+        x = math.floor(part / base * 1000) / 10
+    end
+    return x
+end
+
 t = nil
 local function measure(prepP, prepare, actionP, action, printPrepP)
 
@@ -129,7 +151,7 @@ local function measure(prepP, prepare, actionP, action, printPrepP)
   	 printf("%10.0fns/element ", mspc)
   else
 	  mspc = nil
-	  printf("%dx %-12s sample too small, could not measure ", cycles, actionP)
+	  printf("%dx %-12s ** sample too small, could not measure, use bench7-1k ** ", cycles, actionP)
   end
   
   return mspc, last 
@@ -142,36 +164,38 @@ print(" - Fleece 0.3.1")
 
 local function measureX(prepP, prepare, prompt1, action1, prompt2, action2, 
 	prompt3, action3, prompt4, action4, prompt5, action5, prompt6, action6,
-	prompt7, action7)
+	prompt7, action7, prompt8, action8)
 
   print(sep)
   t = nil
 
 	first, r1 = measure(prepP, prepare, prompt1, action1, true)
-	printf("           %.60s.. \n", r1)
+	printf("                  %.60s.. \n", r1)
 	secnd, r2 = measure(prepP, prepare, prompt2, action2)
-	printf("           %.60s.. \n", r2)
+	printf("                  %.60s.. \n", r2)
+	third, r3 = measure(prepP, prepare, prompt3, action3)
+	printf("                  %.60s.. \n", r3)
 
-	submeasure(prepP, prepare, prompt3, action3, first, secnd)
-	submeasure(prepP, prepare, prompt4, action4, first, secnd)
-	submeasure(prepP, prepare, prompt5, action5, first, secnd)
-	submeasure(prepP, prepare, prompt6, action6, first, secnd)
-	submeasure(prepP, prepare, prompt7, action7, first, secnd)
+	submeasure(prepP, prepare, prompt4, action4, first, secnd, third)
+	submeasure(prepP, prepare, prompt5, action5, first, secnd, third)
+	submeasure(prepP, prepare, prompt6, action6, first, secnd, third)
+	submeasure(prepP, prepare, prompt7, action7, first, secnd, third)
+	submeasure(prepP, prepare, prompt8, action8, first, secnd, third)
 
 end
 
-function submeasure(prepP, prepare, prompt, action, first, secnd)
+function submeasure(prepP, prepare, prompt, action, first, secnd, third)
 
-	third, r = measure(prepP, prepare, prompt, action)
-	if(first and third) then prc = math.floor(third / first * 100) else prc = 0 end
-	printf("%2d%%, ", prc)
-	if(secnd and third) then prc = math.floor(third / secnd * 100) else prc = 0 end
-	printf("%2d%% ", prc)
+	forth, r = measure(prepP, prepare, prompt, action)
+	prc = prcstr(forth, first)
+	printf("%3g%%, ", prc)
+	prc = prcstr(forth, secnd)
+	printf("%3g%% ", prc)
+	prc = prcstr(forth, third)
+	printf("%3g%% ", prc)
 	printf("  %.60s.. \n", r)
 
 end
-
-
 
 print(sep)
 
@@ -181,6 +205,8 @@ measureX("t[i]=i",
 		function(i) return luajson.stringify(t) end,
 		"json4.encode(t)",
 		function(i) return json4.encode(t) end,
+		"yajl.to_string(t)",
+		function(i) return yajl.to_string(t) end,
 		"fleece.json(t, \"E0\")",
 		function(i) return fleece.json(t, "E0") end,
 		"fleece.json(t, \"E1\")",
@@ -192,46 +218,6 @@ measureX("t[i]=i",
 		"fleece.json(t, \"E4\")",
 		function(i) return fleece.json(t, "E4") end
 		)		
-
-print(sep)
-chance = 4
-print ("Frequency of escape characters 1 in " .. chance)
-		
-measureX("t[i]=randstr(i)",
-		function(i) t[i] = randstr(i) end,
-		"luajson.stringify(t)",
-		function(i) return luajson.stringify(t) end,
-		"json4.encode(t)",
-		function(i) return json4.encode(t) end,
-		"fleece.json(t, \"E0\")",
-		function(i) return fleece.json(t, "E0") end,
-		"fleece.json(t, \"E1\")",
-		function(i) return fleece.json(t, "E1") end,
-		"fleece.json(t, \"E2\")",
-		function(i) return fleece.json(t, "E2") end,
-		"fleece.json(t, \"E3\")",
-		function(i) return fleece.json(t, "E3") end,
-		"fleece.json(t, \"E4\")",
-		function(i) return fleece.json(t, "E4") end
-		)		
-		
-measureX("t[randstr(i)]=randstr(i)",
-		function(i) t[randstr(i)] = randstr(i) end,
-		"luajson.stringify(t)",
-		function(i) return luajson.stringify(t) end,
-		"json4.encode(t)",
-		function(i) return json4.encode(t) end,
-		"fleece.json(t, \"E0\")",
-		function(i) return fleece.json(t, "E0") end,
-		"fleece.json(t, \"E1\")",
-		function(i) return fleece.json(t, "E1") end,
-		"fleece.json(t, \"E2\")",
-		function(i) return fleece.json(t, "E2") end,
-		"fleece.json(t, \"E3\")",
-		function(i) return fleece.json(t, "E3") end,
-		"fleece.json(t, \"E4\")",
-		function(i) return fleece.json(t, "E4") end
-		)			
 
 print(sep)
 chance = 10
@@ -243,6 +229,8 @@ measureX("t[i]=randstr(i)",
 		function(i) return luajson.stringify(t) end,
 		"json4.encode(t)",
 		function(i) return json4.encode(t) end,
+		"yajl.to_string(t)",
+		function(i) return yajl.to_string(t) end,
 		"fleece.json(t, \"E0\")",
 		function(i) return fleece.json(t, "E0") end,
 		"fleece.json(t, \"E1\")",
@@ -261,6 +249,8 @@ measureX("t[randstr(i)]=randstr(i)",
 		function(i) return luajson.stringify(t) end,
 		"json4.encode(t)",
 		function(i) return json4.encode(t) end,
+		"yajl.to_string(t)",
+		function(i) return yajl.to_string(t) end,
 		"fleece.json(t, \"E0\")",
 		function(i) return fleece.json(t, "E0") end,
 		"fleece.json(t, \"E1\")",
@@ -283,6 +273,8 @@ measureX("t[i]=randstr(i)",
 		function(i) return luajson.stringify(t) end,
 		"json4.encode(t)",
 		function(i) return json4.encode(t) end,
+		"yajl.to_string(t)",
+		function(i) return yajl.to_string(t) end,
 		"fleece.json(t, \"E0\")",
 		function(i) return fleece.json(t, "E0") end,
 		"fleece.json(t, \"E1\")",
@@ -301,6 +293,8 @@ measureX("t[randstr(i)]=randstr(i)",
 		function(i) return luajson.stringify(t) end,
 		"json4.encode(t)",
 		function(i) return json4.encode(t) end,
+		"yajl.to_string(t)",
+		function(i) return yajl.to_string(t) end,
 		"fleece.json(t, \"E0\")",
 		function(i) return fleece.json(t, "E0") end,
 		"fleece.json(t, \"E1\")",
@@ -324,6 +318,8 @@ measureX("t[i]=randstr(i)",
 		function(i) return luajson.stringify(t) end,
 		"json4.encode(t)",
 		function(i) return json4.encode(t) end,
+		"yajl.to_string(t)",
+		function(i) return yajl.to_string(t) end,
 		"fleece.json(t, \"E0\")",
 		function(i) return fleece.json(t, "E0") end,
 		"fleece.json(t, \"E1\")",
@@ -342,6 +338,8 @@ measureX("t[randstr(i)]=randstr(i)",
 		function(i) return luajson.stringify(t) end,
 		"json4.encode(t)",
 		function(i) return json4.encode(t) end,
+		"yajl.to_string(t)",
+		function(i) return yajl.to_string(t) end,
 		"fleece.json(t, \"E0\")",
 		function(i) return fleece.json(t, "E0") end,
 		"fleece.json(t, \"E1\")",
@@ -366,6 +364,8 @@ measureX("t[i]=randstr(i)",
 		function(i) return luajson.stringify(t) end,
 		"json4.encode(t)",
 		function(i) return json4.encode(t) end,
+		"yajl.to_string(t)",
+		function(i) return yajl.to_string(t) end,
 		"fleece.json(t, \"E0\")",
 		function(i) return fleece.json(t, "E0") end,
 		"fleece.json(t, \"E1\")",
@@ -384,6 +384,8 @@ measureX("t[randstr(i)]=randstr(i)",
 		function(i) return luajson.stringify(t) end,
 		"json4.encode(t)",
 		function(i) return json4.encode(t) end,
+		"yajl.to_string(t)",
+		function(i) return yajl.to_string(t) end,
 		"fleece.json(t, \"E0\")",
 		function(i) return fleece.json(t, "E0") end,
 		"fleece.json(t, \"E1\")",
@@ -401,4 +403,4 @@ measureX("t[randstr(i)]=randstr(i)",
 print(sep)
 
 print("Note that fleece may list associative arrays in different order.")
-
+print("Also note that output can be derailed by random ctrl characters.")

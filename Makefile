@@ -2,7 +2,7 @@
 ### Package     : Fleece - fast Lua to JSON conversion                      ###
 ### File        : ./Makefile                                                ###
 ### Description : Main make file, building, tests, benchmarks               ###
-### Version     : 0.3.0 / alpha                                             ###
+### Version     : 0.3.1 / alpha                                             ###
 ### Copyright   : 2011 Henning Diedrich, Eonblast Corporation               ###
 ### Author      : H. Diedrich <hd2010@eonblast.com>                         ###
 ### License     : see file LICENSE                                          ###
@@ -253,14 +253,13 @@ check:
 
 # edit to use for version number updates across all files
 upversion:
-	sed -E -e s/0\.2\.5/0.3.0/g -i .bak .*
-	sed -E -e s/0\.2\.5/0.3.0/g -i .bak *.*
-	sed -E -e s/0\.2\.5/0.3.0/g -i .bak Makefile
-	sed -E -e s/0\.2\.5/0.3.0/g -i .bak test/*.*
-	sed -E -e s/0\.2\.5/0.3.0/g -i .bak test/unit/*.*
-	sed -E -e s/0\.2\.5/0.3.0/g -i .bak src/*.*
-	sed -E -e s/0\.2\.5/0.3.0/g -i .bak etc/*.*
-	sed -E -e s/0\.2\.5/0.3.0/g -i .bak include/*.*
+	sed -E -e s/0\.3\.0/0.3.1/g -i .bak *.*
+	sed -E -e s/0\.3\.0/0.3.1/g -i .bak Makefile
+	sed -E -e s/0\.3\.0/0.3.1/g -i .bak test/*.*
+	sed -E -e s/0\.3\.0/0.3.1/g -i .bak test/unit/*.*
+	sed -E -e s/0\.3\.0/0.3.1/g -i .bak src/*.*
+	sed -E -e s/0\.3\.0/0.3.1/g -i .bak etc/*.*
+	sed -E -e s/0\.3\.0/0.3.1/g -i .bak include/*.*
 
 # clean up *.bak files that are produced by 'make upversion'
 delbak:
@@ -295,6 +294,9 @@ html:
 	@lua etc/markdown.lua --style etc/css/style.css --inline-style test/README.md
 	@sed -E -e 's/url\(\.\.\/\.\.\/etc/url(..\/etc/g' -i .bak test/README.html
 	@sed -E -e 's/src=etc/src=..\/etc/g' -i .bak test/README.html
+	@lua etc/markdown.lua --style etc/css/style.css --inline-style test/SAMPLE.md
+	@sed -E -e 's/url\(\.\.\/\.\.\/etc/url(..\/etc/g' -i .bak test/SAMPLE.html
+	@sed -E -e 's/src=etc/src=..\/etc/g' -i .bak test/SAMPLE.html
 	@lua etc/markdown.lua --style etc/css/style.css --inline-style LICENSE
 	@sed -E -e 's/url\(\.\.\/\.\.\/etc/url(etc/g' -i .bak LICENSE.html
 	@echo "done, start from ./index.html (which, itself is not generated)"

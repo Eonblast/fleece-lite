@@ -1,60 +1,59 @@
 -------------------------------------------------------------------------------
 --- Package     : Fleece - fast Lua to JSON module                          ---
---- File        : test/bench3.lua                                           ---
---- Description : Fleece vs JSON4 and luajson: random tables, speedcked     ---
+--- File        : test/bench4e.lua                                          ---
+--- Description : Fleece vs Lua-Yajl                                        ---
 --- Version     : 0.3.1 / alpha                                             ---
 --- Copyright   : 2011 Henning Diedrich, Eonblast Corporation               ---
 --- Author      : H. Diedrich <hd2010@eonblast.com>                         ---
 --- License     : see file LICENSE                                          ---
---- Created     :    Feb 2011                                               ---
---- Changed     : 02 Mar 2011                                               ---
+--- Created     : 20 Mar 2011                                               ---
+--- Changed     : 20 Mar 2011                                               ---
 -------------------------------------------------------------------------------
 ---                                                                         ---
 ---  Fleece is optimized for the fastest Lua to JSON conversion and beats   ---
----  other JSON implementations by around 10 times, native Lua up to 100x.  ---
+---  other JSON implementations by around 10 times, native Lua around 100.  ---
 ---  Please let me know about the speed you are observing.                  ---
 ---  hd2010@eonblast.com                                                    ---
 ---                                                                         ---
----  This compares Fleece to a native Lua implementation and a C library:   ---
+---  This compares Fleece to Lua-Yajl:                                      ---
 ---                                                                         ---
----  JSON4 0.9.50: (aka JSON4Lua, JSON for Lua) http://json.luaforge.net/   ---
----  LuaJSON 1.1: (aka luajsonlib) http://luaforge.net/projects/luajsonlib/ ---
+---  Yajl 1.0.9: http://lloyd.github.com/yajl/                              ---
+---  Lua-yajl Oct '10: http://github.com/brimworks/lua-yajl/                ---
 ---                                                                         ---
----  Use: lua test/bench3.lua                                               ---
+---  Building with Yajl is not always fun, you can safely skip this.        ---
+---                                                                         ---
+---  Use: lua test/bench4e.lua                                              ---
 ---                                                                         ---
 -------------------------------------------------------------------------------
 
-print("Fleece Benchmarks vs Json4 / native Lua and LuaJSON C lib")
-print("=========================================================")
+print("Fleece Benchmarks vs Lua-Yajl C lib")
+print("===================================")
 print("A couple of random tables are created and speed is clocked.")
-print("You should have built fleece first with 'make <PLATFORM>', ")
-print("and also built luajson.so with 'make <PLATFORM>-test,")
-print("and now be in the fleece root directory.")
-print("IF THIS TEST CRASHES, TRY BENCH3a & BENCH3b TO SEE WHO DOES.")
+print("Building with Yajl is not always fun, you can safely skip this.")
+print("You should have built fleece first with 'make <PLATFORM>'")
+print("And now be in the fleece root directory. You should have ")
+print("built yajl into etc/yajl.")
+print("There is no support in fleece to build yajl or lua-yajl.")
+print("You need to get and build yajl and lua-yajl manually.")
+print("Yajl 1.0.9: http://lloyd.github.com/yajl/")
+print("Lua-yajl Oct '10: http://github.com/brimworks/lua-yajl/")
 
 ELEMENTS = 1000
 CYCLES   = 1000
 
 package.cpath="src/?.so"
 fleece = require("fleece")
-package.path="etc/json4/?.lua"
-json4 = require("json")
-package.cpath="etc/luajson/?.so"
-luajson = require("luajson")
 
--- luajson stuff
-local base = _G
-local json = luajson
-json.null = {_mt = {__tostring = function () return "null" end, __call = function () return "null" end}}
-base.setmetatable(json.null, json.null._mt)
-
+-- luayajl stuff
+package.cpath = "etc/yajl/?.so" 
+local yajl  = require("yajl")
 
 sep = "---------------------------------------------------------------------------------"
 
 printcol = 0
 function printf(...)
 	s = string.format(...)
-	if(s:find("\n") or s:len() == 0) then printcol = 0 else printcol = printcol + s:len() end
+	if(s:find("\n")) then printcol = 0 else printcol = printcol + s:len() end
     io.write(s)
 end
 
@@ -81,16 +80,6 @@ function randstr(i)
 
       return table.concat(r)
  end
- 
- 
-function prcstr(part, base)
-    if base == 0 or base == nil or part == nil then return 0 end
-    x = math.floor(part / base * 100)
-    if(x <= 2) then
-        x = math.floor(part / base * 1000) / 10
-    end
-    return x
-end
 
 local t = {}
 local function measure(prepP, prepare, actionP, action, printPrepP)
@@ -120,7 +109,7 @@ local function measure(prepP, prepare, actionP, action, printPrepP)
   	 printf("%10.0fns/element ", mspc)
   else
 	  mspc = nil
-	  printf("%dx %-12s ** sample too small, could not measure, increase CYCLES in the source of this test ** ", cycles, actionP)
+	  printf("%dx %-12s sample too small, could not measure ", cycles, actionP)
   end
   
   return mspc, last 
@@ -129,64 +118,51 @@ if(_PATCH) then io.write(_PATCH) else io.write(_VERSION .. ' official') end
 print(" - Fleece 0.3.1")
 
 
-local function measure3(prepP, prepare, prompt1, action1, prompt2, action2, prompt3, action3)
-
-  print(sep)
-
-	first, r1 = measure(prepP, prepare, prompt1, action1, true)
-	printf("            %.20s.. \n", r1)
-	secnd, r2 = measure(prepP, prepare, prompt2, action2)
-	printf("            %.20s.. \n", r2)
-	third, r3 = measure(prepP, prepare, prompt3, action3)
+local function measure4(prepP, prepare, p1, a1, p2, a2)
 	
-	prc = prcstr(third, first)
-	printf("%3g%%, ", prc)
-	prc = prcstr(third, secnd)
-	printf("%3g%%  %.20s.. \n", prc, r3)
+	print(sep)
 
+	first, r1 = measure(prepP, prepare, p1, a1, true)
+	printf("         %.20s.. \n", r1)
+	secnd, r2 = measure(prepP, prepare, p2, a2)
+	
+	if(first and secnd) then prc = math.floor(forth / first * 100) else prc = 0 end
+	printf("%2d%% ", prc)
+	printf(" %.20s.. \n", r4)
+	
 end
 
-
-measure3("t[i]=i",
+measure4("t[i]=i",
 		function(i) t[i] = i end,
-		"luajson.stringify(t)",
-		function(i) return luajson.stringify(t) end,
-		"json4.encode(t)",
-		function(i) return json4.encode(t) end,
+		"yajl.to_string(t)",
+		function(i) return yajl.to_string(t) end,
 		"fleece.json(t)",
 		function(i) return fleece.json(t) end
 		)
 
-measure3("t['x'..i]=i",
+measure4("t['x'..i]=i",
 		function(i) t['x'..i] = i end,
-		"luajson.stringify(t)",
-		function(i) return luajson.stringify(t) end,
-		"json4.encode(t)",
-		function(i) return json4.encode(t) end,
+		"yajl.to_string(t)",
+		function(i) return yajl.to_string(t) end,
 		"fleece.json(t)",
 		function(i) return fleece.json(t) end
 		)		
 
-measure3("t[i]=randstr(i)",
+measure4("t[i]=randstr(i)",
 		function(i) t[i] = randstr(i) end,
-		"luajson.stringify(t)",
-		function(i) return luajson.stringify(t) end,
-		"json4.encode(t)",
-		function(i) return json4.encode(t) end,
+		"yajl.to_string(t)",
+		function(i) return yajl.to_string(t) end,
 		"fleece.json(t)",
 		function(i) return fleece.json(t) end
 		)		
 		
-measure3("t[randstr(i)]=randstr(i)",
+measure4("t[randstr(i)]=randstr(i)",
 		function(i) t[randstr(i)] = randstr(i) end,
-		"luajson.stringify(t)",
-		function(i) return luajson.stringify(t) end,
-		"json4.encode(t)",
-		function(i) return json4.encode(t) end,
+		"yajl.to_string(t)",
+		function(i) return yajl.to_string(t) end,
 		"fleece.json(t)",
 		function(i) return fleece.json(t) end
 		)			
 print(sep)
-
 print("Note that fleece may list associative arrays in different order.")
 

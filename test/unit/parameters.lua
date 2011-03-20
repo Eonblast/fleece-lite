@@ -2,7 +2,7 @@
 --- Package     : Fleece - fast Lua to JSON module                          ---
 --- File        : test/unit/parameters.lua                                  ---
 --- Description : Fleece unit tests: focus on parameters                    ---
---- Version     : 0.3.0 / alpha                                             ---
+--- Version     : 0.3.1 / alpha                                             ---
 --- Copyright   : 2011 Henning Diedrich, Eonblast Corporation               ---
 --- Author      : H. Diedrich <hd2010@eonblast.com>                         ---
 --- License     : see file LICENSE                                          ---
